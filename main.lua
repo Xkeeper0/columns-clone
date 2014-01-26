@@ -5,6 +5,7 @@
 	-- Include required classes
 	LCS			= require("LCS")		-- Lua Class System
 	Playfield	= require("Playfield")	-- Playfield
+	Piece		= require("Piece")		-- Pieces
 
 
 
