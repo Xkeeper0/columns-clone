@@ -78,10 +78,49 @@
 
 
 
+	--- Checks if a piece can fit in the playfield at a certain position.
+	--
+	-- @param piece		Piece to place
+	-- @param x			X position
+	-- @param y			Y position
+	-- @param layer		Layer
+	-- @return	true/false if the place can be placed in the playfield
+	function Playfield:canPlacePiece(piece, x, y, layer)
+
+	end
+
+
+	--- Places a piece into the playfield.
+	--
+	-- @param piece		Piece to place
+	-- @param x			X position
+	-- @param y			Y position
+	-- @param layer		Layer
+	-- @return	true/false if piece was placed into the playfield
+	function Playfield:placePiece(piece, x, y, layer)
+		if not self:canPlacePiece(piece, x, y, layer) then
+			-- Error
+			return false
+		end
+
+
+	end
+
+
+	--- Checks if a piece can fit in the playfield at a certain position
+	-- Maybe returns an array of matches + X/Y pairs or nil if none?
+	-- @return ?
+	function Playfield:checkForClears()
+
+	end
+
+
+
+
 
 
 
 
 	-- Return class/module
-	
+
 	return Playfield
