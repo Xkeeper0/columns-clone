@@ -16,9 +16,33 @@
 
 
 	-- Testing
-	local test	= Playfield:new()
+	local test	= Playfield:new(6, 9)
+	print(test)
+
+	math.randomseed(os.clock())
+
+	local i	= 0
+	for i = 1, 50 do
+		local testPiece	= Piece:new({1, 2, 3, 4}, 1, 3)
+		test:placePiece(testPiece, math.random(1, 6), math.random(1, 10))
+	end
+
+	print "Playfield (now):"
+	print(test)
+
+	test:doGravity()
 	print(test)
 
 
-	local testPiece	= Piece:new({1, 2, 3, 4, 5}, 1, 3)
-	print(testPiece)
+	-- This will probably crash everything
+
+	local clears	= false
+
+	repeat
+		print "--------------------------------"
+		print(test)
+		clears	= test:checkForClears()
+		test:clearClears(1, clears)
+		test:doGravity()
+	until (not clears)
+

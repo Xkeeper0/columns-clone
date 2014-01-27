@@ -55,14 +55,18 @@
 	--- Output piece as a string
 	function Piece:describe()
 		local output	= "Piece:\n"
-		for k, v in ipairs(self.layout) do
+		for k, v in pairs(self.layout) do
 			output	= output .. string.format("%d: X=%d Y=%d B=%d\n", k, v.x, v.y, v.b)
 		end
 		return output
 	end
 
 
+	--- Return the piece's layout as a table
+	function Piece:getLayout()
+		return self.layout
 
+	end
 
 
 	return Piece
