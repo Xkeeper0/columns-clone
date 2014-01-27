@@ -4,45 +4,51 @@
 	-- @copyright Xkeeper 2014
 	--
 
-	-- Set includes to check classes/?.lua
-	package.path	= package.path .. ";classes/?.lua"
 
-	-- Include required classes
-	LCS			= require("LCS")		-- Lua Class System
-	Playfield	= require("Playfield")	-- Playfield
-	Piece		= require("Piece")		-- Pieces
+	--- LOVE Init
+	function love.load()
 
+		-- Set includes to check classes/?.lua
+		package.path	= package.path .. ";classes/?.lua"
 
+		-- Include required classes
+		LCS			= require("LCS")		-- Lua Class System
+		Playfield	= require("Playfield")	-- Playfield
+		Piece		= require("Piece")		-- Pieces
 
+		testPlayfield	= Playfield:new()
+		testPiece		= Piece:new({1, 2, 3, 4, 5})
+		lastKey			= ""
 
-	-- Testing
-	local test	= Playfield:new(6, 9)
-	print(test)
-
-	math.randomseed(os.clock())
-
-	local i	= 0
-	for i = 1, 50 do
-		local testPiece	= Piece:new({1, 2, 3, 4}, 1, 3)
-		test:placePiece(testPiece, math.random(1, 6), math.random(1, 10))
 	end
 
-	print "Playfield (now):"
-	print(test)
-
-	test:doGravity()
-	print(test)
 
 
-	-- This will probably crash everything
+	--- LOVE Drawing callback.
+	function love.draw()
 
-	local clears	= false
+		love.graphics.print(tostring(testPlayfield), 100, 100)
+		love.graphics.print(tostring(testPiece), 400, 100)
+		love.graphics.print(tostring(lastKey), 400, 200)
 
-	repeat
-		print "--------------------------------"
-		print(test)
-		clears	= test:checkForClears()
-		test:clearClears(1, clears)
-		test:doGravity()
-	until (not clears)
 
+	end
+
+
+	--- LOVE Update callback.
+	-- @param dt	Delta-time of update (in seconds)
+	function love.update(dt)
+
+
+	end
+
+
+
+	--- LOVE Keypress callback
+	-- (mostly for debugging right now)
+	-- @param key		Character of the key pressed
+	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
+	function love.keypressed(key, isrepeat)
+		lastKey	= key
+
+	end
