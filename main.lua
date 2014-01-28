@@ -13,6 +13,7 @@
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
+		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 
