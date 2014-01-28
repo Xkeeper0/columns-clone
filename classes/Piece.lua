@@ -62,6 +62,17 @@
 	end
 
 
+
+
+	--- Temporary ugly way to draw a piece to the playfield
+	function Piece:draw(xPosition, yPosition, pieceX, pieceY)
+		for k, v in pairs(self.layout) do
+			love.graphics.setColor(blockColors[v.b])
+			love.graphics.print(string.format("%2d", v.b), xPosition + ((pieceX - 1 + v.x) * 20), yPosition + ((pieceY - 1 + v.y) * 20))
+		end
+	end
+
+
 	--- Return the piece's layout as a table
 	function Piece:getLayout()
 		return self.layout
