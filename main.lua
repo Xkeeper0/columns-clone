@@ -35,6 +35,16 @@
 		blockColors[0]	= { 20, 20, 20}
 
 
+		fonts	= {
+			main		= love.graphics.setNewFont(10),
+			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .");
+			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .");
+
+			}
+
+
+	gTimer	= 0
+
 	end
 
 
@@ -42,26 +52,34 @@
 	--- LOVE Drawing callback.
 	function love.draw()
 
+		love.graphics.setFont(fonts.numbers)
+
 		testPlayfield:draw(100, 100)
 		testPiece:draw(100, 100, testPieceX, testPieceY)
+
+		love.graphics.setColor(255, 255, 255)
+
+		love.graphics.setFont(fonts.bignumbers)
+		love.graphics.printf(string.format("%.2f", gTimer), 400, 300, 200, "right")
+
+
+		love.graphics.setFont(fonts.main)
 
 		-- love.graphics.print(tostring(testPlayfield), 100, 100)
 		-- love.graphics.print(tostring(testPiece), 400, 100)
 		-- love.graphics.print(tostring(lastKey), 400, 200)
 
-		love.graphics.setColor(255, 255, 255)
 		love.graphics.print("arrow keys: move\nspace: drop\n\nclears/gravity is on a timer for now\n\nenjoy", 400, 150)
 
 	end
 
 
 
-	gTimer	= 0
 	--- LOVE Update callback.
 	-- @param dt	Delta-time of update (in seconds)
 	function love.update(dt)
-		if math.floor(gTimer + dt * 2) > math.floor(gTimer) then
-			if math.fmod(gTimer, 2) < 1 then
+		if math.floor((gTimer + dt) * 2) > math.floor(gTimer * 2) then
+			if math.fmod(gTimer * 2, 2) < 1 then
 				local clears	= testPlayfield:checkForClears()
 				if clears then
 					testPlayfield:clearClears(clears)
@@ -71,7 +89,7 @@
 			end
 		end
 
-		gTimer	= gTimer + dt * 2
+		gTimer	= gTimer + dt
 
 
 	end
