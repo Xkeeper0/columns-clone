@@ -55,7 +55,9 @@
 
 		sounds	= {
 			clear		= love.audio.newSource("sounds/clear.wav", "static"),
+			cycle		= love.audio.newSource("sounds/cycle.wav", "static"),
 			drop		= love.audio.newSource("sounds/drop.wav", "static"),
+			move		= love.audio.newSource("sounds/move.wav", "static"),
 			gravity		= love.audio.newSource("sounds/gravity.wav", "static")
 			}
 
@@ -145,14 +147,21 @@
 
 		if key == "left" then
 			if testPlayfield:canPlacePiece(testPiece, testPieceX - 1, testPieceY) then
+				sounds.move:stop()
+				sounds.move:play()
 				testPieceX	= testPieceX - 1
 			end
 		end
+
 		if key == "right" then
+
 			if testPlayfield:canPlacePiece(testPiece, testPieceX + 1, testPieceY) then
+				sounds.move:stop()
+				sounds.move:play()
 				testPieceX	= testPieceX + 1
 			end
 		end
+
 		if key == "down" then
 			if testPlayfield:canPlacePiece(testPiece, testPieceX , testPieceY + 1) then
 				testPieceY	= testPieceY + 1
@@ -161,6 +170,9 @@
 
 
 		if key == "x" then
+			sounds.cycle:stop()
+			sounds.cycle:play()
+
 			testPiece:cycleBlocks()
 		end
 
@@ -176,7 +188,6 @@
 			testPieceY	= 1
 
 		end
-
 
 
 	end
