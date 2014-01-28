@@ -108,7 +108,7 @@
 
 
 		if key == "x" then
-			-- testPiece:cycleBlocks()
+			testPiece:cycleBlocks()
 		end
 
 		if key == " " then
