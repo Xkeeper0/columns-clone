@@ -9,12 +9,12 @@
 	function love.load()
 
 		-- Set includes to check classes/?.lua
-		package.path	= package.path .. ";classes/?.lua"
+		--package.path	= package.path .. ";classes/?.lua"
 
 		-- Include required classes
-		LCS			= require("LCS")		-- Lua Class System
-		Playfield	= require("Playfield")	-- Playfield
-		Piece		= require("Piece")		-- Pieces
+		LCS			= require("classes.LCS")		-- Lua Class System
+		Playfield	= require("classes.Playfield")	-- Playfield
+		Piece		= require("classes.Piece")		-- Pieces
 
 		testPlayfield	= Playfield:new()
 		testPiece		= Piece:new({1, 2, 3, 4, 5})

@@ -1,6 +1,6 @@
 
 	-- Require Lua Class System
-	LCS	= require("LCS")
+	LCS	= require("classes.LCS")
 
 	-- Create class
 	Playfield	= LCS.class({ w = 6, h = 20, layers = 1, field = {} })
