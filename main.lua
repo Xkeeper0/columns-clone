@@ -17,7 +17,7 @@
 		Piece		= require("classes.Piece")		-- Pieces
 
 		testPlayfield	= Playfield:new()
-		testPiece		= Piece:new({1, 2, 3, 4, 5})
+		testPiece		= Piece:new({1, 2, 3, 4})
 		lastKey			= ""
 
 		testPieceX		= 3
