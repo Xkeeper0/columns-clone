@@ -257,7 +257,9 @@
 	-- This function is a huge work-in-progress that might be changed a lot later
 	-- @param	layer		Layer to clear blocks from
 	-- @param	clearBlocks	Array of blocks to clear from
-	function Playfield:clearClears(layer, clearBlocks)
+	function Playfield:clearClears(clearBlocks, layer)
+
+		local layer	= layer or 1
 
 		if not clearBlocks then
 			return
@@ -312,6 +314,31 @@
 	end
 
 
+
+
+
+	--- Quick hacky way to draw a playfield
+	--
+	function Playfield:draw(xPosition, yPosition, layer)
+
+		local layer	= layer or 1
+
+		-- Loop variables
+		local i, x, y	= 0, 0, 0
+
+		local output	= ""
+
+		-- Build string of playfield values
+		for y = 1, self.h do
+			for x = 1, self.w do
+				love.graphics.setColor(blockColors[self.field[layer][x][y]])
+
+				love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
+			end
+			output	= output .. "\n"
+		end
+
+	end
 
 
 
