@@ -98,7 +98,7 @@
 		love.graphics.setFont(fonts.main)
 
 
-		love.graphics.print("arrow keys: move\nspace: drop\nx: cycle colors\n\nclears/gravity is on a timer for now\n\nenjoy", 500, 150)
+		love.graphics.print("arrow keys: move\nup: drop\nx: cycle colors\n\nclears/gravity is on a timer for now\n\nenjoy", 500, 150)
 
 
 	end
@@ -153,11 +153,6 @@
 				testPieceX	= testPieceX + 1
 			end
 		end
-		if key == "up" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX, testPieceY - 1) then
-				testPieceY	= testPieceY - 1
-			end
-		end
 		if key == "down" then
 			if testPlayfield:canPlacePiece(testPiece, testPieceX , testPieceY + 1) then
 				testPieceY	= testPieceY + 1
@@ -169,7 +164,10 @@
 			testPiece:cycleBlocks()
 		end
 
-		if key == " " then
+		if key == "up" then
+			sounds.drop:stop()
+			sounds.drop:play()
+
 			testPlayfield:placePiece(testPiece, testPieceX, testPieceY)
 			testPlayfield:doGravity()
 
