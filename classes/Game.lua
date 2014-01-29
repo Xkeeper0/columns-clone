@@ -61,36 +61,20 @@
 		currentPiecePosition.x	= defaultPieceX
 
 		-- Initalize the game state
-		gameState			= false
+		gameState			= "pieceInPlay"
 		gameStateTime		= gTimer
 
 		playerInput			= true
 	end
 
 
-
-	--- test
-	function Game:update(newState)
-
-		local firstRun		= false
-
-		if newState then
-			gameState		= newState
-			gameStateTime	= gTimer
-			firstRun		= true
-		end
-
-		-- Might need self added here???
-		gameStates[gameState](firstRun)
-
-
-		-- Something to do with game states here
+	function Game:getGameStateTime()
+		return gTimer - gameStateTime
 
 	end
 
 
-
-	function Game:pieceInPlay()
+	function Game.pieceInPlay(self, firstRun)
 		playerInput	= true
 
 		-- Gravity here?
@@ -100,7 +84,7 @@
 
 
 
-	function Game:afterPiece(firstRun)
+	function Game.afterPiece(self, firstRun)
 		
 		if firstRun then
 			playerInput	= false
@@ -110,9 +94,6 @@
 			if clears then
 				currentChain	= currentChain and (currentChain + 1) or 1
 				clearPoints		= 100 * #clears * (currentLevel + 1)
-				sounds.clear:stop()
-				sounds.clear:setPitch(1 + math.pow(currentChain, 1.025))
-				sounds.clear:play()
 			else
 				currentChain	= false
 				-- Skip right to the after-gravity phase
@@ -122,7 +103,7 @@
 		else
 
 			-- Delay for a bit and/or animate?
-			if self:getGameStateTime() > 0.5 then
+			if self:getGameStateTime() > 0.25 then
 				self:update('doClears')
 			end
 
@@ -132,48 +113,48 @@
 	end
 
 
-	function Game:doClears(firstRun)
+	function Game.doClears(self, firstRun)
 		if firstRun then
 			playfield:clearClears(clears)
 			sounds.clear:stop()
-			sounds.clear:setPitch(1 + math.pow(wasClear, 1.025))
+			sounds.clear:setPitch(1 + math.pow(currentChain, 1.025))
 			sounds.clear:play()		else
 		end
-		
+
 		-- Delay for a bit and/or animate?
-		if self:getGameStateTime() > 0.5 then
+		if self:getGameStateTime() > 0.25 then
 			self:update('doGravity')
 		end			
 	end
 
 
-	function Game:doGravity(firstRun)
+	function Game.doGravity(self, firstRun)
 		if firstRun then
-			totalScore	= totalScore + clearPoints * wasClear
+			currentScore	= currentScore + clearPoints * currentChain
 			testPlayfield:doGravity()
 			sounds.gravity:stop()
 			sounds.gravity:play()
 		else
 			
 			-- Go back and check if there are more clears.
-			if self:getGameStateTime() > 0.5 then
+			if self:getGameStateTime() > 0.25 then
 				self:update('afterPiece')
 			end			
 		end
 	end
 
 
-	function Game:beforeNextPiece(firstRun)
+	function Game.beforeNextPiece(self, firstRun)
 
 		-- Delay for a while
-		if self:getGameStateTime() > 1 then
-			self:update('DO_NEXT_PIECE')
+		if self:getGameStateTime() > .1 then
+			self:update('nextPiece')
 		end
 
 	end
 
 
-	function Game:nextPiece(firstRun)
+	function Game.nextPiece(self, firstRun)
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
 		nextPiece				= Piece:new(blockTypes)
@@ -195,25 +176,70 @@
 
 
 
+	--- test
+	function Game:update(newState)
+
+		local firstRun		= false
+
+		if newState then
+			gameState		= newState
+			gameStateTime	= gTimer
+			firstRun		= true
+		end
+
+		-- Might need self added here???
+		gameStates[gameState](self, firstRun and true or false)
+
+
+		-- Something to do with game states here
+
+	end
+
+
 
 	---
 	function Game:movePiece(direction)
 
-		local playSound	= false
-		if direction == "left" then
+		if not playerInput then
+			return
+		end
 
+		if direction == "cycle" then
+			sounds.cycle:stop()
+			sounds.cycle:play()
+
+			currentPiece:cycleBlocks()
+
+		elseif direction == "left" then
+			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x - 1, currentPiecePosition.y) then
+				sounds.move:stop()
+				sounds.move:play()
+				currentPiecePosition.x	= currentPiecePosition.x - 1
+			end
 		elseif direction == "right" then
 
+			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x + 1, currentPiecePosition.y) then
+				sounds.move:stop()
+				sounds.move:play()
+				currentPiecePosition.x	= currentPiecePosition.x + 1
+			end
 
 		elseif direction == "down" then
+			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y + 1) then
+				testPieceY	= testPieceY + 1
+			else
+				direction	= "harddrop"	-- lock the piece into place if it can't move down any more
+			end
 
+		end
 
-		elseif direction == "harddrop" then
+		if direction == "harddrop" then
 
 			sounds.drop:stop()
 			sounds.drop:play()
 			playfield:placePiece(currentPiece, currentPiecePosition.x, currentPiecePosition.y)
 			playfield:doGravity()
+			self:update("afterPiece")
 
 		end
 
@@ -221,10 +247,45 @@
 
 
 
-	---
-	function Game:getGameStateTime()
-		return gameStateTime - gTimer;
 
+	function Game:test()
+		love.graphics.print(tostring(gameState) .. ", T:" .. tostring(self:getGameStateTime()) , 50, 50)
+
+
+	end
+
+	---
+
+
+
+	function Game:draw(x, y)
+
+		love.graphics.setFont(fonts.numbers)
+
+		playfield:draw(100, 100)
+		if playerInput then
+			currentPiece:draw(100, 100, currentPiecePosition.x, currentPiecePosition.y)
+		end
+		nextPiece:draw(300, 100, 1, 1)
+
+		love.graphics.setColor(150, 150, 150)
+
+		if currentChain then
+			love.graphics.setFont(fonts.numbers)
+			love.graphics.printf(string.format("%d\nx%2d", clearPoints, currentChain or 0), 300, 170, 99, "right")
+			love.graphics.setColor(clearColors[math.min(#clearColors, currentChain)])
+			love.graphics.setFont(fonts.bignumbers)
+			love.graphics.printf(string.format("%d", clearPoints * (currentChain or 0)), 300, 190, 100, "right")
+		end
+
+		love.graphics.setFont(fonts.bignumbers)
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.printf(string.format("%d", currentScore), 300, 220, 100, "right")
+
+		love.graphics.setFont(fonts.numbers)
+		love.graphics.printf(string.format("%.2f", gTimer), 300, 300, 100, "right")
+
+		love.graphics.setFont(fonts.main)
 	end
 
 

@@ -17,12 +17,6 @@
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 
-		testPlayfield	= Playfield:new()
-		testPiece		= Piece:new({1, 2, 3, 4})
-		lastKey			= ""
-
-		testPieceX		= 3
-		testPieceY		= 1
 
 		blockColors		= {	
 							{ 255,   0,   0 },
@@ -63,11 +57,13 @@
 			}
 
 
-		wasClear		= false
-		clearPoints		= 0
-		totalScore		= 0
+
 
 		gTimer	= 0
+
+		testPlayfield	= Playfield:new()
+
+		testGame		= Game:new(testPlayfield, {1, 2, 3, 4})
 
 	end
 
@@ -76,33 +72,8 @@
 	--- LOVE Drawing callback.
 	function love.draw()
 
-		love.graphics.setFont(fonts.numbers)
-
-		testPlayfield:draw(100, 100)
-		testPiece:draw(100, 100, testPieceX, testPieceY)
-
-		love.graphics.setColor(150, 150, 150)
-
-		if wasClear then
-			love.graphics.setFont(fonts.numbers)
-			love.graphics.printf(string.format("%d\nx%2d", clearPoints, wasClear or 0), 300, 170, 99, "right")
-			love.graphics.setColor(clearColors[math.min(#clearColors, wasClear)])
-			love.graphics.setFont(fonts.bignumbers)
-			love.graphics.printf(string.format("%d", clearPoints * (wasClear or 0)), 300, 190, 100, "right")
-		end
-
-		love.graphics.setFont(fonts.bignumbers)
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.printf(string.format("%d", totalScore), 300, 220, 100, "right")
-
-		love.graphics.setFont(fonts.numbers)
-		love.graphics.printf(string.format("%.2f", gTimer), 300, 300, 100, "right")
-
-		love.graphics.setFont(fonts.main)
-
-
-		love.graphics.print("arrow keys: move\nup: drop\nx: cycle colors\n\nclears/gravity is on a timer for now\n\nenjoy", 500, 150)
-
+		testGame:draw(100, 100)
+		testGame:test()
 
 	end
 
@@ -111,30 +82,9 @@
 	--- LOVE Update callback.
 	-- @param dt	Delta-time of update (in seconds)
 	function love.update(dt)
-		if math.floor((gTimer + dt) * 2) > math.floor(gTimer * 2) then
-			if math.fmod(gTimer * 2, 2) < 1 then
-				local clears	= testPlayfield:checkForClears()
-				if clears then
-					testPlayfield:clearClears(clears)
-					wasClear	= wasClear and (wasClear + 1) or 1
-					clearPoints	= 100 * #clears
-					sounds.clear:stop()
-					sounds.clear:setPitch(1 + math.pow(wasClear, 1.025))
-					sounds.clear:play()
-				else
-					wasClear	= false
-				end
-			elseif wasClear then
-				totalScore	= totalScore + clearPoints * wasClear
-				testPlayfield:doGravity()
-				sounds.gravity:stop()
-				sounds.gravity:play()
-			end
-		end
-
 		gTimer	= gTimer + dt
 
-
+		testGame:update()
 	end
 
 
@@ -144,51 +94,18 @@
 	-- @param key		Character of the key pressed
 	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
 	function love.keypressed(key, isrepeat)
-		lastKey	= key
 
-		if key == "left" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX - 1, testPieceY) then
-				sounds.move:stop()
-				sounds.move:play()
-				testPieceX	= testPieceX - 1
-			end
+
+		keytable	= {
+			up		= "harddrop",
+			left	= "left",
+			right	= "right",
+			down	= "down",
+			x		= "cycle"
+			}
+
+		if keytable[key] then
+			testGame:movePiece(keytable[key])
 		end
-
-		if key == "right" then
-
-			if testPlayfield:canPlacePiece(testPiece, testPieceX + 1, testPieceY) then
-				sounds.move:stop()
-				sounds.move:play()
-				testPieceX	= testPieceX + 1
-			end
-		end
-
-		if key == "down" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX , testPieceY + 1) then
-				testPieceY	= testPieceY + 1
-			end
-		end
-
-
-		if key == "x" then
-			sounds.cycle:stop()
-			sounds.cycle:play()
-
-			testPiece:cycleBlocks()
-		end
-
-		if key == "up" then
-			sounds.drop:stop()
-			sounds.drop:play()
-
-			testPlayfield:placePiece(testPiece, testPieceX, testPieceY)
-			testPlayfield:doGravity()
-
-			testPiece	= Piece:new({1, 2, 3, 4})
-			testPieceX	= 3
-			testPieceY	= 1
-
-		end
-
 
 	end
