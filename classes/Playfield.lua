@@ -152,7 +152,6 @@
 				if x <= self.w - 2 and y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, -1)		-- Diagonal /
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -160,7 +159,6 @@
 				if x <= self.w - 2 and y then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, 1)		-- Diagonal \
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -168,7 +166,6 @@
 				if x <= self.w - 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, 0)		-- Horizontal
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 				
@@ -176,7 +173,6 @@
 				if y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 0, -1)		-- Vertical
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -215,7 +211,6 @@
 
 		-- Quick abort if it'd go out of bounds
 		if (xs > 0 and x + (xs * 2) > self.w) or (ys < 0 and y + (ys * 2) < 1) then
-			print "Clear check went out of bounds"
 			return false
 		end
 
