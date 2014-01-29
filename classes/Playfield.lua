@@ -231,6 +231,14 @@
 		-- If so, keep going until it, uh, doesn't.
 		while currentBlock ~= 0 and startBlock == currentBlock and cx <= self.w and cy >= 1 and cy <= self.h do
 
+			-- Check if the block behind this is the same color; if so we've already scanned this
+			-- and it can be safely ignored
+			if chain == 0 and (x - xs) >= 1 and (y - ys) <= self.h then
+				if self.field[l][x-xs][y-ys] == startBlock then
+					break
+				end
+			end 
+
 			currentBlock	= self.field[l][cx][cy]
 			if (startBlock == currentBlock) then
 				chain	= chain + 1

@@ -13,7 +13,9 @@
 	local currentScore			= 0			-- (real) current score
 	local displayScore			= 0			-- in case I feel like making a fancy rolling counter
 	local currentChain			= false		-- Current chain value (false if no chain)
-	local clearScore			= 0			-- Points for the most recent clear
+	local clearPoints			= 0			-- Points for the most recent clear
+	local clearedBlocks			= 0			-- Total blocks cleared
+	local blocksCleared			= 0			-- Blocks cleared in latest clear
 
 	local clearTotal			= 0			-- Total pieces cleared (for later)
 	local currentLevel			= 0			-- Current game level
@@ -92,8 +94,22 @@
 			-- Check for clears?
 			clears	= playfield:checkForClears()
 			if clears then
+				clearPoints			= 0
+				local base			= 100
+				
+				blocksCleared	= 0
+				for k, v in pairs(clears) do
+					blocksCleared	= blocksCleared + #v
+				end
+
+				clearedBlocks	= clearedBlocks + blocksCleared
+
+				-- Add a block penalty so 3 = base, 4 = base * 2, etc.
+				blocksCleared	= blocksCleared - 2
+				clearPoints		= base * blocksCleared
+
 				currentChain	= currentChain and (currentChain + 1) or 1
-				clearPoints		= 100 * #clears * (currentLevel + 1)
+				clearPoints		= clearPoints * (currentLevel + 1)
 			else
 				currentChain	= false
 				-- Skip right to the after-gravity phase
@@ -246,10 +262,8 @@
 
 
 
-	function Game:test()
-		love.graphics.print(tostring(gameState) .. ", T:" .. tostring(self:getGameStateTime()) , 50, 50)
-
-
+	function Game:showGameState()
+		love.graphics.print(string.format("%s\nT=%.2f", gameState, self:getGameStateTime()) , 50, 50)
 	end
 
 	---
@@ -257,6 +271,11 @@
 
 
 	function Game:draw(x, y)
+
+		if displayScore < currentScore then
+			-- Rolling counter goofiness
+			displayScore	= math.min(displayScore + (currentScore - displayScore) * 0.02 + 1, currentScore)
+		end
 
 		love.graphics.setFont(fonts.numbers)
 
@@ -270,7 +289,7 @@
 
 		if currentChain then
 			love.graphics.setFont(fonts.numbers)
-			love.graphics.printf(string.format("%d\nx%2d", clearPoints, currentChain or 0), 300, 170, 99, "right")
+			love.graphics.printf(string.format("%d\nx%2d\nx%2d", clearPoints, blocksCleared, currentChain or 0), 300, 160, 99, "right")
 			love.graphics.setColor(clearColors[math.min(#clearColors, currentChain)])
 			love.graphics.setFont(fonts.bignumbers)
 			love.graphics.printf(string.format("%d", clearPoints * (currentChain or 0)), 300, 190, 100, "right")
@@ -278,12 +297,19 @@
 
 		love.graphics.setFont(fonts.bignumbers)
 		love.graphics.setColor(255, 255, 255)
-		love.graphics.printf(string.format("%d", currentScore), 300, 220, 100, "right")
+		love.graphics.printf(string.format("%d", displayScore), 300, 220, 100, "right")
 
 		love.graphics.setFont(fonts.numbers)
-		love.graphics.printf(string.format("%.2f", gTimer), 300, 300, 100, "right")
+		love.graphics.printf(string.format("%d", clearedBlocks), 300, 260, 99, "right")
+
+
+		love.graphics.setFont(fonts.numbers)
+		love.graphics.printf(string.format("%.2f", gTimer), 700, 1, 100, "right")
 
 		love.graphics.setFont(fonts.main)
+		love.graphics.print("points", 402, 225)
+		love.graphics.print("blocks", 402, 257)
+
 	end
 
 

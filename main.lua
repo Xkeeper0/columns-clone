@@ -73,7 +73,7 @@
 	function love.draw()
 
 		testGame:draw(100, 100)
-		testGame:test()
+		testGame:showGameState()
 
 	end
 
