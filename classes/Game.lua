@@ -187,11 +187,9 @@
 			firstRun		= true
 		end
 
-		-- Might need self added here???
+
 		gameStates[gameState](self, firstRun and true or false)
 
-
-		-- Something to do with game states here
 
 	end
 
@@ -226,7 +224,7 @@
 
 		elseif direction == "down" then
 			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y + 1) then
-				testPieceY	= testPieceY + 1
+				currentPiecePosition.y	= currentPiecePosition.y + 1
 			else
 				direction	= "harddrop"	-- lock the piece into place if it can't move down any more
 			end
