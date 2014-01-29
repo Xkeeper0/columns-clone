@@ -152,7 +152,6 @@
 				if x <= self.w - 2 and y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, -1)		-- Diagonal /
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -160,7 +159,6 @@
 				if x <= self.w - 2 and y then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, 1)		-- Diagonal \
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -168,7 +166,6 @@
 				if x <= self.w - 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, 0)		-- Horizontal
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 				
@@ -176,7 +173,6 @@
 				if y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 0, -1)		-- Vertical
 					if chain then
-						print(string.format("Clear at X=%d Y=%d, L=%d", x, y, chain))
 						table.insert(clearBlocks, blocks)
 					end
 
@@ -215,7 +211,6 @@
 
 		-- Quick abort if it'd go out of bounds
 		if (xs > 0 and x + (xs * 2) > self.w) or (ys < 0 and y + (ys * 2) < 1) then
-			print "Clear check went out of bounds"
 			return false
 		end
 
@@ -230,6 +225,14 @@
 		-- Look to see if the next block matches the block we started with
 		-- If so, keep going until it, uh, doesn't.
 		while currentBlock ~= 0 and startBlock == currentBlock and cx <= self.w and cy >= 1 and cy <= self.h do
+
+			-- Check if the block behind this is the same color; if so we've already scanned this
+			-- and it can be safely ignored
+			if chain == 0 and (x - xs) >= 1 and (y - ys) <= self.h then
+				if self.field[l][x-xs][y-ys] == startBlock then
+					break
+				end
+			end 
 
 			currentBlock	= self.field[l][cx][cy]
 			if (startBlock == currentBlock) then

@@ -80,4 +80,20 @@
 	end
 
 
+
+	function Piece:cycleBlocks()
+
+		local i, numBlocks, top	= 1, #self.layout
+		local top	= self.layout[numBlocks]['b']
+
+		for i = numBlocks, 1, -1 do
+			local next	= (i == 1) and 1 or i - 1
+			self.layout[i]['b']	= self.layout[next]['b']
+		end
+
+		self.layout[1]['b']	= top
+
+
+	end
+
 	return Piece

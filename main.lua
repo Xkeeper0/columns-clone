@@ -13,15 +13,10 @@
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
+		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 
-		testPlayfield	= Playfield:new()
-		testPiece		= Piece:new({1, 2, 3, 4, 5})
-		lastKey			= ""
-
-		testPieceX		= 3
-		testPieceY		= 1
 
 		blockColors		= {	
 							{ 255,   0,   0 },
@@ -31,9 +26,44 @@
 							{ 255,   0, 255 }
 
 						}
+		blockColors[0]	= { 40, 40, 40}
 
-		blockColors[0]	= { 20, 20, 20}
+		clearColors		= {	
+							{ 255,  80,  80 },
+							{ 255, 255,   0 },
+							{  80, 255,  80 },
+							{  80, 255, 255 },
+							{  80,  80, 255 },
+							{ 255,  80, 255 },
+							{ 255, 180, 180 },
+							{ 255, 255, 255 },
+						}
 
+
+
+		fonts	= {
+			main		= love.graphics.setNewFont(10),
+			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x");
+			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x");
+
+			}
+
+		sounds	= {
+			clear		= love.audio.newSource("sounds/clear.wav", "static"),
+			cycle		= love.audio.newSource("sounds/cycle.wav", "static"),
+			drop		= love.audio.newSource("sounds/drop.wav", "static"),
+			move		= love.audio.newSource("sounds/move.wav", "static"),
+			gravity		= love.audio.newSource("sounds/gravity.wav", "static")
+			}
+
+
+
+
+		gTimer	= 0
+
+		testPlayfield	= Playfield:new()
+
+		testGame		= Game:new(testPlayfield, {1, 2, 3, 4})
 
 	end
 
@@ -42,38 +72,19 @@
 	--- LOVE Drawing callback.
 	function love.draw()
 
-		testPlayfield:draw(100, 100)
-		testPiece:draw(100, 100, testPieceX, testPieceY)
-
-		-- love.graphics.print(tostring(testPlayfield), 100, 100)
-		-- love.graphics.print(tostring(testPiece), 400, 100)
-		-- love.graphics.print(tostring(lastKey), 400, 200)
-
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.print("arrow keys: move\nspace: drop\n\nclears/gravity is on a timer for now\n\nenjoy", 400, 150)
+		testGame:draw(100, 100)
+		testGame:showGameState()
 
 	end
 
 
 
-	gTimer	= 0
 	--- LOVE Update callback.
 	-- @param dt	Delta-time of update (in seconds)
 	function love.update(dt)
-		if math.floor(gTimer + dt * 2) > math.floor(gTimer) then
-			if math.fmod(gTimer, 2) < 1 then
-				local clears	= testPlayfield:checkForClears()
-				if clears then
-					testPlayfield:clearClears(clears)
-				end
-			else
-				testPlayfield:doGravity()
-			end
-		end
+		gTimer	= gTimer + dt
 
-		gTimer	= gTimer + dt * 2
-
-
+		testGame:update()
 	end
 
 
@@ -83,43 +94,18 @@
 	-- @param key		Character of the key pressed
 	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
 	function love.keypressed(key, isrepeat)
-		lastKey	= key
 
-		if key == "left" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX - 1, testPieceY) then
-				testPieceX	= testPieceX - 1
-			end
+
+		keytable	= {
+			up		= "harddrop",
+			left	= "left",
+			right	= "right",
+			down	= "down",
+			x		= "cycle"
+			}
+
+		if keytable[key] then
+			testGame:movePiece(keytable[key])
 		end
-		if key == "right" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX + 1, testPieceY) then
-				testPieceX	= testPieceX + 1
-			end
-		end
-		if key == "up" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX, testPieceY - 1) then
-				testPieceY	= testPieceY - 1
-			end
-		end
-		if key == "down" then
-			if testPlayfield:canPlacePiece(testPiece, testPieceX , testPieceY + 1) then
-				testPieceY	= testPieceY + 1
-			end
-		end
-
-
-		if key == "x" then
-			-- testPiece:cycleBlocks()
-		end
-
-		if key == " " then
-			testPlayfield:placePiece(testPiece, testPieceX, testPieceY)
-			testPlayfield:doGravity()
-
-			testPiece	= Piece:new({1, 2, 3, 4})
-			testPieceX	= 3
-			testPieceY	= 1
-
-		end
-
 
 	end
