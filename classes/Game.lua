@@ -9,11 +9,14 @@
 	-- "Local variables"
 	-- (i.e. 'protected')
 
-	-- Score variables
-	local currentScore			= 0			-- (real) current score
-	local displayScore			= 0			-- in case I feel like making a fancy rolling counter
+	-- Points variables
+	local currentPoints			= 0			-- (real) current score
+	local displayPoints			= 0			-- in case I feel like making a fancy rolling counter
 	local currentChain			= false		-- Current chain value (false if no chain)
+	local lastChain				= false		-- Last chain value (or false if no chain)
 	local clearPoints			= 0			-- Points for the most recent clear
+	local chainPoints			= 0			-- Points for this chain, in total
+	local displayChainPoints	= 0			-- Points for this chain, in total
 	local clearedBlocks			= 0			-- Total blocks cleared
 	local blocksCleared			= 0			-- Blocks cleared in latest clear
 
@@ -109,9 +112,12 @@
 				clearPoints		= base * blocksCleared
 
 				currentChain	= currentChain and (currentChain + 1) or 1
+				lastChain		= currentChain
 				clearPoints		= clearPoints * (currentLevel + 1)
 			else
-				currentChain	= false
+				-- Allow chains to continue for one drop
+				currentChain	= lastChain and lastChain or false
+				lastChain		= false
 				-- Skip right to the after-gravity phase
 				self:update('beforeNextPiece')
 			end
@@ -133,7 +139,7 @@
 		if firstRun then
 			playfield:clearClears(clears)
 			sounds.clear:stop()
-			sounds.clear:setPitch(1 + (currentChain - 1) * 0.2)
+			sounds.clear:setPitch(1 + (currentChain - 1) * 0.1)
 			sounds.clear:play()		else
 		end
 
@@ -146,7 +152,11 @@
 
 	function Game.doGravity(self, firstRun)
 		if firstRun then
-			currentScore	= currentScore + clearPoints * currentChain
+
+			if currentChain then
+				chainPoints	= chainPoints + clearPoints * currentChain
+			end
+
 			testPlayfield:doGravity()
 			sounds.gravity:stop()
 			sounds.gravity:play()
@@ -161,6 +171,13 @@
 
 
 	function Game.beforeNextPiece(self, firstRun)
+
+		if not currentChain then
+			currentPoints		= currentPoints + chainPoints
+			chainPoints			= 0
+			displayChainPoints	= 0
+
+		end
 
 		-- Delay for a while
 		if self:getGameStateTime() > .1 then
@@ -272,9 +289,14 @@
 
 	function Game:draw(x, y)
 
-		if displayScore < currentScore then
+		if displayPoints < currentPoints then
 			-- Rolling counter goofiness
-			displayScore	= math.min(displayScore + (currentScore - displayScore) * 0.075 + 1, currentScore)
+			displayPoints	= math.min(displayPoints + (currentPoints - displayPoints) * 0.02 + 1, currentPoints)
+		end
+
+		if displayChainPoints < chainPoints then
+			-- Rolling counter goofiness
+			displayChainPoints	= math.min(displayChainPoints + (chainPoints - displayChainPoints) * 0.08 + 1, chainPoints)
 		end
 
 		love.graphics.setFont(fonts.numbers)
@@ -289,15 +311,17 @@
 
 		if currentChain then
 			love.graphics.setFont(fonts.numbers)
-			love.graphics.printf(string.format("%d\nx%2d", clearPoints, currentChain or 0), 300, 170, 99, "right")
+			love.graphics.printf(string.format("%d\nx%2d", clearPoints, currentChain or 0), 300, 130, 99, "right")
 			love.graphics.setColor(clearColors[math.min(#clearColors, currentChain)])
 			love.graphics.setFont(fonts.bignumbers)
-			love.graphics.printf(string.format("%d", clearPoints * (currentChain or 0)), 300, 190, 100, "right")
+			love.graphics.printf(string.format("%d", clearPoints * (currentChain or 0)), 300, 150, 100, "right")
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.printf(string.format("%d", displayChainPoints), 300, 170, 100, "right")
 		end
 
 		love.graphics.setFont(fonts.bignumbers)
 		love.graphics.setColor(255, 255, 255)
-		love.graphics.printf(string.format("%d", displayScore), 300, 220, 100, "right")
+		love.graphics.printf(string.format("%d", displayPoints), 300, 220, 100, "right")
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%d", clearedBlocks), 300, 260, 99, "right")
