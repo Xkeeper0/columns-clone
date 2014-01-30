@@ -133,7 +133,7 @@
 		if firstRun then
 			playfield:clearClears(clears)
 			sounds.clear:stop()
-			sounds.clear:setPitch(1 + math.pow(currentChain, 1.025))
+			sounds.clear:setPitch(1 + (currentChain - 1) * 0.2)
 			sounds.clear:play()		else
 		end
 
@@ -274,22 +274,22 @@
 
 		if displayScore < currentScore then
 			-- Rolling counter goofiness
-			displayScore	= math.min(displayScore + (currentScore - displayScore) * 0.02 + 1, currentScore)
+			displayScore	= math.min(displayScore + (currentScore - displayScore) * 0.075 + 1, currentScore)
 		end
 
 		love.graphics.setFont(fonts.numbers)
 
-		playfield:draw(100, 100)
+		playfield:draw(100, 50)
 		if playerInput then
-			currentPiece:draw(100, 100, currentPiecePosition.x, currentPiecePosition.y)
+			currentPiece:draw(100, 50, currentPiecePosition.x, currentPiecePosition.y)
 		end
-		nextPiece:draw(300, 100, 1, 1)
+		nextPiece:draw(250, 50, 1, 1)
 
 		love.graphics.setColor(150, 150, 150)
 
 		if currentChain then
 			love.graphics.setFont(fonts.numbers)
-			love.graphics.printf(string.format("%d\nx%2d\nx%2d", clearPoints, blocksCleared, currentChain or 0), 300, 160, 99, "right")
+			love.graphics.printf(string.format("%d\nx%2d", clearPoints, currentChain or 0), 300, 170, 99, "right")
 			love.graphics.setColor(clearColors[math.min(#clearColors, currentChain)])
 			love.graphics.setFont(fonts.bignumbers)
 			love.graphics.printf(string.format("%d", clearPoints * (currentChain or 0)), 300, 190, 100, "right")
@@ -304,7 +304,7 @@
 
 
 		love.graphics.setFont(fonts.numbers)
-		love.graphics.printf(string.format("%.2f", gTimer), 700, 1, 100, "right")
+		love.graphics.printf(string.format("%.2f", gTimer), 540, 1, 100, "right")
 
 		love.graphics.setFont(fonts.main)
 		love.graphics.print("points", 402, 225)
