@@ -29,13 +29,23 @@
 		blockColors[0]	= { 40, 40, 40}
 
 		clearColors		= {	
-							{ 255,  80,  80 },
-							{ 255, 255,   0 },
-							{  80, 255,  80 },
-							{  80, 255, 255 },
-							{  80,  80, 255 },
-							{ 255,  80, 255 },
-							{ 255, 180, 180 },
+							{ 120, 120, 255 },
+							{ 180, 120, 240 },
+							{ 220, 120, 220 },
+							{ 240, 120, 180 },
+							{ 255, 120, 120 },
+							{ 240, 180, 120 },
+							{ 220, 220, 120 },
+							{ 180, 240, 120 },
+							{ 120, 255, 120 },
+							{ 120, 240, 180 },
+							{ 120, 220, 220 },
+							{ 120, 180, 240 },
+							{ 150, 180, 255 },
+							{ 200, 150, 240 },
+							{ 240, 175, 200 },
+							{ 255, 200, 240 },
+							{ 255, 240, 240 },
 							{ 255, 255, 255 },
 						}
 
@@ -43,8 +53,8 @@
 
 		fonts	= {
 			main		= love.graphics.setNewFont(10),
-			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x");
-			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x");
+			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x"),
+			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x"),
 
 			}
 
@@ -52,8 +62,11 @@
 			clear		= love.audio.newSource("sounds/clear.wav", "static"),
 			cycle		= love.audio.newSource("sounds/cycle.wav", "static"),
 			drop		= love.audio.newSource("sounds/drop.wav", "static"),
+			lock		= love.audio.newSource("sounds/lock.wav", "static"),
 			move		= love.audio.newSource("sounds/move.wav", "static"),
-			gravity		= love.audio.newSource("sounds/gravity.wav", "static")
+			gravity		= love.audio.newSource("sounds/gravity.wav", "static"),
+			magic		= love.audio.newSource("sounds/magicpiece.wav", "static"),
+			levelup		= love.audio.newSource("sounds/levelup.wav", "static"),
 			}
 
 
@@ -73,7 +86,7 @@
 	function love.draw()
 
 		testGame:draw(100, 100)
-		testGame:showGameState()
+		--testGame:showGameState()
 
 	end
 
