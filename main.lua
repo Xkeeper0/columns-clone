@@ -53,8 +53,8 @@
 
 		fonts	= {
 			main		= love.graphics.setNewFont(10),
-			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x");
-			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x");
+			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x"),
+			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x"),
 
 			}
 
@@ -62,8 +62,11 @@
 			clear		= love.audio.newSource("sounds/clear.wav", "static"),
 			cycle		= love.audio.newSource("sounds/cycle.wav", "static"),
 			drop		= love.audio.newSource("sounds/drop.wav", "static"),
+			lock		= love.audio.newSource("sounds/lock.wav", "static"),
 			move		= love.audio.newSource("sounds/move.wav", "static"),
-			gravity		= love.audio.newSource("sounds/gravity.wav", "static")
+			gravity		= love.audio.newSource("sounds/gravity.wav", "static"),
+			magic		= love.audio.newSource("sounds/magicpiece.wav", "static"),
+			levelup		= love.audio.newSource("sounds/levelup.wav", "static"),
 			}
 
 

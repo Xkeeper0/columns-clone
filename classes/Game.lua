@@ -24,7 +24,7 @@
 
 	local clearTotal			= 0			-- Total pieces cleared (for later)
 	local currentLevel			= 0			-- Current game level
-
+	local levelUpBlocks			= 50		-- Blocks per level
 
 
 
@@ -34,6 +34,43 @@
 	local nextPiece				= false
 	local defaultPieceX			= 3
 	local defaultPieceY			= 1
+
+	local gravityTiming			= {
+		{	1.000,		2.500	},	-- 0
+		{	0.900,		2.000	},
+		{	0.800,		2.000	},
+		{	0.700,		2.000	},
+		{	0.600,		2.000	},
+		{	0.500,		2.000	},	-- 5
+		{	0.400,		1.500	},
+		{	0.350,		1.500	},
+		{	0.300,		1.500	},
+		{	0.250,		1.500	},
+		{	0.500,		1.000	},	-- 10
+		{	0.350,		1.000	},
+		{	0.250,		1.000	},
+		{	0.200,		1.000	},
+		{	0.150,		1.000	},
+		{	0.100,		0.750	},	-- 15
+		{	0.075,		0.750	},
+		{	0.050,		0.750	},
+		{	0.030,		0.750	},
+		{	0.015,		0.700	},
+		{	0.010,		0.500	},	-- 20
+		{	0.005,		0.500	},
+		{	0.003,		0.500	},
+		{	0.001,		0.500	},
+		{	0.000,		0.500	},	-- 24
+	}
+
+	local gravityTimer			= false						-- Last time we did gravity time (gameStateTime)
+	local gravityTime			= gravityTiming[1][1]		-- How long it takes for a piece to move down one row
+	local lockTimer				= false						-- When the piece stared to lock (gameStateTime)
+	local lockTime				= gravityTiming[1][2]		-- How long until pieces lock
+
+
+
+
 
 	local playfield				= false
 	local blockTypes			= {1, 2, 3, 4}
@@ -71,6 +108,8 @@
 		gameState			= "pieceInPlay"
 		gameStateTime		= gTimer
 
+		gravityTimer		= gameStateTime
+
 		playerInput			= true
 	end
 
@@ -82,10 +121,37 @@
 
 
 	function Game.pieceInPlay(self, firstRun)
-		playerInput	= true
 
-		-- Gravity here?
-		-- Otherwise do nothing of value because derp.
+		if (firstRun) then
+			gravityTimer	= gameStateTime
+			playerInput	= true
+		end
+
+		while (gTimer - gravityTimer) > gravityTime do
+
+			if self:doPieceGravity() then
+				-- I think this works?
+				-- Add (difference between timers) to the other timer
+				-- This way if the game lags for however long it'll drop more than one row or something
+
+				gravityTimer	= (gravityTimer + gravityTime)
+				lockTimer		= false
+			else
+				if not lockTimer then
+					lockTimer	= gTimer
+					sounds.drop:stop()
+					sounds.drop:play()
+				else
+					if gTimer - lockTimer > lockTime then
+						self:movePiece("harddrop")
+					end
+				end
+
+				-- Break out of gravity loop
+				break
+			end
+		end
+
 
 	end
 
@@ -168,9 +234,33 @@
 
 		-- Delay for a bit and/or animate?
 		if self:getGameStateTime() > 0.25 then
-			self:update('doGravity')
+			self:update('doLevelUp')
 		end			
 	end
+
+
+
+	function Game.doLevelUp(self, firstRun)
+
+		if math.floor(clearedBlocks / levelUpBlocks) > currentLevel then
+			-- Play "level up" sound
+			sounds.levelup:stop()
+			sounds.levelup:play()
+			-- Increment level by one
+
+			currentLevel	= math.floor(clearedBlocks / levelUpBlocks)
+
+			local speedLevel	= math.min(currentLevel + 1, #gravityTiming)
+			gravityTime			= gravityTiming[speedLevel][1]
+			lockTime			= gravityTiming[speedLevel][2]
+
+		end
+
+		self:update('doGravity')
+
+	end
+
+
 
 
 	function Game.doGravity(self, firstRun)
@@ -213,6 +303,9 @@
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
 		nextPiece				= Piece:new(blockTypes)
+
+		gravityTimer			= gameStateTime
+		lockTimer				= false
 		self:update('pieceInPlay')
 	end
 
@@ -224,6 +317,7 @@
 		afterPiece		= Game.afterPiece,
 		doClearCheck	= Game.doClearCheck,
 		doClears		= Game.doClears,
+		doLevelUp		= Game.doLevelUp,
 		doGravity		= Game.doGravity,
 		beforeNextPiece	= Game.beforeNextPiece,
 		nextPiece		= Game.nextPiece,
@@ -251,8 +345,24 @@
 
 
 
+	--- Move the piece downwards, in accordance with gravity
+	function Game:doPieceGravity(givePoints)
+
+		if playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y + 1) then
+			currentPiecePosition.y	= currentPiecePosition.y + 1
+			if givePoints then
+				currentPoints	= currentPoints + (currentLevel + 1)
+			end
+			return true
+		end
+
+		return false
+
+	end
+
+
 	---
-	function Game:movePiece(direction)
+	function Game:movePiece(direction, skipStateChange)
 
 		if not playerInput then
 			return
@@ -279,9 +389,7 @@
 			end
 
 		elseif direction == "down" then
-			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y + 1) then
-				currentPiecePosition.y	= currentPiecePosition.y + 1
-			else
+			if not self:doPieceGravity(true) then
 				direction	= "harddrop"	-- lock the piece into place if it can't move down any more
 			end
 
@@ -289,11 +397,17 @@
 
 		if direction == "harddrop" then
 
-			sounds.drop:stop()
-			sounds.drop:play()
+			repeat
+				-- forever
+			until not self:doPieceGravity(true)
+
+			sounds.lock:stop()
+			sounds.lock:play()
 			playfield:placePiece(currentPiece, currentPiecePosition.x, currentPiecePosition.y)
 			playfield:doGravity()
-			self:update("afterPiece")
+			if not skipStateChange then
+				self:update("afterPiece")
+			end
 
 		end
 
@@ -356,9 +470,13 @@
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%d", clearedBlocks), 300, 260, 99, "right")
 
+		love.graphics.printf(string.format("%d", currentLevel), 300, 276, 99, "right")
+
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%.2f", gTimer), 540, 1, 100, "right")
+
+
 
 		love.graphics.setFont(fonts.main)
 
@@ -371,6 +489,13 @@
 
 		love.graphics.print("total points", 402, 220)
 		love.graphics.print("blocks", 402, 257)
+		love.graphics.print("level", 402, 257 + 16)
+
+
+		love.graphics.printf(string.format("%5.3f\n%5.3f\n\n%5.3f\n%5.3f", gravityTime - (gTimer - gravityTimer), gravityTime, lockTimer and (lockTime - (gTimer - lockTimer)) or lockTime, lockTime), 400, 370, 100, "right")
+
+		love.graphics.setFont(fonts.main)
+
 
 	end
 
