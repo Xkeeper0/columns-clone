@@ -26,7 +26,8 @@
 	local currentLevel			= 0			-- Current game level
 	local levelUpBlocks			= 50		-- Blocks per level
 
-
+	-- Game status
+	local gameOver				= false
 
 	-- Our current and next pieces for playing
 	local currentPiece			= false
@@ -306,7 +307,22 @@
 
 		gravityTimer			= gameStateTime
 		lockTimer				= false
+
+		if not playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y) then
+			self:update('doGameOver')
+			return
+		end
+
+
 		self:update('pieceInPlay')
+	end
+
+
+	function Game.doGameOver(self, firstRun)
+
+		playerInput	= false
+		gameOver	= true
+
 	end
 
 
@@ -321,6 +337,7 @@
 		doGravity		= Game.doGravity,
 		beforeNextPiece	= Game.beforeNextPiece,
 		nextPiece		= Game.nextPiece,
+		doGameOver		= Game.doGameOver,
 
 	}
 
@@ -439,7 +456,7 @@
 		love.graphics.setFont(fonts.numbers)
 
 		playfield:draw(100, 50)
-		if playerInput then
+		if playerInput or gameOver then
 			currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gTimer - gravityTimer) / gravityTime)))
 		end
 		nextPiece:draw(250, 50, 1, 1)
@@ -496,6 +513,9 @@
 
 		love.graphics.setFont(fonts.main)
 
+		if gameOver then
+			love.graphics.print("game over.", 250, 130)
+		end
 
 	end
 
