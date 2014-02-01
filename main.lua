@@ -29,7 +29,7 @@
 
 		currentScreen	= "titleScreen";
 
-		blockColors		= {	
+		blockColors		= {
 							{ 255,   0,   0 },
 							{ 255, 255,   0 },
 							{  80, 255,  80 },
@@ -39,7 +39,7 @@
 						}
 		blockColors[0]	= { 40, 40, 40}
 
-		clearColors		= {	
+		clearColors		= {
 							{ 120, 120, 255 },
 							{ 180, 120, 240 },
 							{ 220, 120, 220 },

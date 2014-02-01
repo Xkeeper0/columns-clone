@@ -178,7 +178,7 @@
 
 
 	function Game.doClearCheck(self, firstRun)
-		
+
 		if firstRun then
 
 			-- Check for clears
@@ -186,7 +186,7 @@
 			if clears then
 				clearPoints			= 0
 				local base			= 100
-				
+
 				blocksCleared	= 0
 				for k, v in pairs(clears) do
 					blocksCleared	= blocksCleared + #v
@@ -243,7 +243,7 @@
 		-- Delay for a bit and/or animate?
 		if self:getGameStateTime() > 0.25 then
 			self:runState('doLevelUp')
-		end			
+		end
 	end
 
 
@@ -282,11 +282,11 @@
 			sounds.gravity:stop()
 			sounds.gravity:play()
 		else
-			
+
 			-- Go back and check if there are more clears.
 			if self:getGameStateTime() > 0.25 then
 				self:runState('doClearCheck')
-			end			
+			end
 		end
 	end
 

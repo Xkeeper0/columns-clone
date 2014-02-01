@@ -92,11 +92,11 @@
 
 		for k, v in pairs(pieceBlocks) do
 
-			
+
 			-- Is the piece inbounds?
 			if not (self.field[layer] and self.field[layer][x + v['x']] and self.field[layer][x + v['x']][y + v['y']]) then
 				return false
-			
+
 			-- Is the spot this piece would occupy empty?
 			elseif self.field[layer][x + v['x']][y + v['y']] ~= 0 then
 				-- Something's there already, sorry
@@ -168,7 +168,7 @@
 					if chain then
 						table.insert(clearBlocks, blocks)
 					end
-				
+
 				end
 				if y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 0, -1)		-- Vertical
@@ -232,7 +232,7 @@
 				if self.field[l][x-xs][y-ys] == startBlock then
 					break
 				end
-			end 
+			end
 
 			currentBlock	= self.field[l][cx][cy]
 			if (startBlock == currentBlock) then
