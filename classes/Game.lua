@@ -136,7 +136,11 @@
 				-- This way if the game lags for however long it'll drop more than one row or something
 
 				gravityTimer	= (gravityTimer + gravityTime)
-				lockTimer		= false
+				if lockTimer then
+					-- If a piece was floating and is now free, just move it down once
+					gravityTimer	= gTimer
+					lockTimer		= false
+				end
 			else
 				if not lockTimer then
 					lockTimer	= gTimer
