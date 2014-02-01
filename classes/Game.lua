@@ -440,7 +440,7 @@
 
 		playfield:draw(100, 50)
 		if playerInput then
-			currentPiece:draw(100, 50, currentPiecePosition.x, currentPiecePosition.y)
+			currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gTimer - gravityTimer) / gravityTime)))
 		end
 		nextPiece:draw(250, 50, 1, 1)
 
