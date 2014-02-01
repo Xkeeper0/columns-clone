@@ -26,7 +26,8 @@
 	local currentLevel			= 0			-- Current game level
 	local levelUpBlocks			= 50		-- Blocks per level
 
-
+	-- Game status
+	local gameOver				= false
 
 	-- Our current and next pieces for playing
 	local currentPiece			= false
@@ -79,11 +80,14 @@
 
 	-- Current state we're in. Function pointer to what gets run?
 	local gameState				= false
-	-- Are we handling player input right now?
-	local playerInput			= false
+
+	local gameTimer				= 0
 
 	-- Time when we went into this gamestate (used for timing)
 	local gameStateTime	= 0
+
+	-- Are we handling player input right now?
+	local playerInput			= false
 
 	--- Initialize a game
 	-- What should this even do
@@ -106,7 +110,7 @@
 
 		-- Initalize the game state
 		gameState			= "pieceInPlay"
-		gameStateTime		= gTimer
+		gameStateTime		= gameTimer
 
 		gravityTimer		= gameStateTime
 
@@ -115,7 +119,7 @@
 
 
 	function Game:getGameStateTime()
-		return gTimer - gameStateTime
+		return gameTimer - gameStateTime
 
 	end
 
@@ -127,7 +131,7 @@
 			playerInput	= true
 		end
 
-		while (gTimer - gravityTimer) > gravityTime do
+		while (gameTimer - gravityTimer) > gravityTime do
 
 			if self:doPieceGravity() then
 				-- I think this works?
@@ -135,14 +139,18 @@
 				-- This way if the game lags for however long it'll drop more than one row or something
 
 				gravityTimer	= (gravityTimer + gravityTime)
-				lockTimer		= false
+				if lockTimer then
+					-- If a piece was floating and is now free, just move it down once
+					gravityTimer	= gameTimer
+					lockTimer		= false
+				end
 			else
 				if not lockTimer then
-					lockTimer	= gTimer
+					lockTimer	= gameTimer
 					sounds.drop:stop()
 					sounds.drop:play()
 				else
-					if gTimer - lockTimer > lockTime then
+					if gameTimer - lockTimer > lockTime then
 						self:movePiece("harddrop")
 					end
 				end
@@ -163,14 +171,14 @@
 		currentChain		= false
 		chainBroken			= true
 
-		self:update('doClearCheck')
+		self:runState('doClearCheck')
 
 	end
 
 
 
 	function Game.doClearCheck(self, firstRun)
-		
+
 		if firstRun then
 
 			-- Check for clears
@@ -178,7 +186,7 @@
 			if clears then
 				clearPoints			= 0
 				local base			= 100
-				
+
 				blocksCleared	= 0
 				for k, v in pairs(clears) do
 					blocksCleared	= blocksCleared + #v
@@ -208,14 +216,14 @@
 				totalChain			= currentChain and totalChain or false
 
 				-- Skip right to the after-gravity phase
-				self:update('beforeNextPiece')
+				self:runState('beforeNextPiece')
 			end
 
 		else
 
 			-- Delay for a bit and/or animate?
 			if self:getGameStateTime() > 0.25 then
-				self:update('doClears')
+				self:runState('doClears')
 			end
 
 		end
@@ -234,8 +242,8 @@
 
 		-- Delay for a bit and/or animate?
 		if self:getGameStateTime() > 0.25 then
-			self:update('doLevelUp')
-		end			
+			self:runState('doLevelUp')
+		end
 	end
 
 
@@ -256,7 +264,7 @@
 
 		end
 
-		self:update('doGravity')
+		self:runState('doGravity')
 
 	end
 
@@ -274,11 +282,11 @@
 			sounds.gravity:stop()
 			sounds.gravity:play()
 		else
-			
+
 			-- Go back and check if there are more clears.
 			if self:getGameStateTime() > 0.25 then
-				self:update('doClearCheck')
-			end			
+				self:runState('doClearCheck')
+			end
 		end
 	end
 
@@ -293,7 +301,7 @@
 
 		-- Delay for a while
 		if self:getGameStateTime() > .1 then
-			self:update('nextPiece')
+			self:runState('nextPiece')
 		end
 
 	end
@@ -306,7 +314,22 @@
 
 		gravityTimer			= gameStateTime
 		lockTimer				= false
-		self:update('pieceInPlay')
+
+		if not playfield:canPlacePiece(currentPiece, currentPiecePosition.x , currentPiecePosition.y) then
+			self:runState('doGameOver')
+			return
+		end
+
+
+		self:runState('pieceInPlay')
+	end
+
+
+	function Game.doGameOver(self, firstRun)
+
+		playerInput	= false
+		gameOver	= true
+
 	end
 
 
@@ -321,19 +344,20 @@
 		doGravity		= Game.doGravity,
 		beforeNextPiece	= Game.beforeNextPiece,
 		nextPiece		= Game.nextPiece,
+		doGameOver		= Game.doGameOver,
 
 	}
 
 
 
 	--- test
-	function Game:update(newState)
+	function Game:runState(newState)
 
 		local firstRun		= false
 
 		if newState then
 			gameState		= newState
-			gameStateTime	= gTimer
+			gameStateTime	= gameTimer
 			firstRun		= true
 		end
 
@@ -341,6 +365,15 @@
 		gameStates[gameState](self, firstRun and true or false)
 
 
+	end
+
+
+
+	---
+	function Game:update(dt)
+		gameTimer	= gameTimer + dt
+
+		self:runState()
 	end
 
 
@@ -406,7 +439,7 @@
 			playfield:placePiece(currentPiece, currentPiecePosition.x, currentPiecePosition.y)
 			playfield:doGravity()
 			if not skipStateChange then
-				self:update("afterPiece")
+				self:runState("afterPiece")
 			end
 
 		end
@@ -424,11 +457,11 @@
 
 
 
-	function Game:draw(x, y)
+	function Game:draw(hidePlayfield)
 
 		if displayPoints < currentPoints then
 			-- Rolling counter goofiness
-			displayPoints	= math.min(displayPoints + (currentPoints - displayPoints) * 0.02 + 1, currentPoints)
+			displayPoints	= math.min(displayPoints + math.floor((currentPoints - displayPoints) * 0.02) + 1 + currentLevel, currentPoints)
 		end
 
 		if displayChainPoints < chainPoints then
@@ -438,11 +471,13 @@
 
 		love.graphics.setFont(fonts.numbers)
 
-		playfield:draw(100, 50)
-		if playerInput then
-			currentPiece:draw(100, 50, currentPiecePosition.x, currentPiecePosition.y)
+		if not hidePlayfield then
+			playfield:draw(100, 50)
+			if playerInput or gameOver then
+				currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))
+			end
+			nextPiece:draw(250, 50, 1, 1)
 		end
-		nextPiece:draw(250, 50, 1, 1)
 
 		love.graphics.setColor(150, 150, 150)
 
@@ -474,7 +509,7 @@
 
 
 		love.graphics.setFont(fonts.numbers)
-		love.graphics.printf(string.format("%.2f", gTimer), 540, 1, 100, "right")
+		love.graphics.printf(string.format("%.2f", gameTimer), 540, 1, 100, "right")
 
 
 
@@ -491,11 +526,17 @@
 		love.graphics.print("blocks", 402, 257)
 		love.graphics.print("level", 402, 257 + 16)
 
+		love.graphics.setFont(fonts.numbers)
 
-		love.graphics.printf(string.format("%5.3f\n%5.3f\n\n%5.3f\n%5.3f", gravityTime - (gTimer - gravityTimer), gravityTime, lockTimer and (lockTime - (gTimer - lockTimer)) or lockTime, lockTime), 400, 370, 100, "right")
+		love.graphics.printf(string.format("%5.3f\n%5.3f\n\n%5.3f\n%5.3f", gravityTime - (gameTimer - gravityTimer), gravityTime, lockTimer and (lockTime - (gameTimer - lockTimer)) or lockTime, lockTime), 400, 370, 100, "right")
 
 		love.graphics.setFont(fonts.main)
+		love.graphics.print("gravity time\n\nlock time", 500, 370)
 
+
+		if gameOver then
+			love.graphics.print("game over.", 250, 130)
+		end
 
 	end
 

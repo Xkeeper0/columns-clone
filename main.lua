@@ -13,12 +13,23 @@
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
+		Screen		= require("classes.Screen")		-- Game (contains all the other stuff)
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 
+		screens			= {
 
-		blockColors		= {	
+			default			= Screen,
+			titleScreen		= require("classes.Screen.TitleScreen"),
+			inGame			= require("classes.Screen.InGame"),
+			inGamePaused	= require("classes.Screen.InGamePaused"),
+
+			}
+
+		currentScreen	= "titleScreen";
+
+		blockColors		= {
 							{ 255,   0,   0 },
 							{ 255, 255,   0 },
 							{  80, 255,  80 },
@@ -28,7 +39,7 @@
 						}
 		blockColors[0]	= { 40, 40, 40}
 
-		clearColors		= {	
+		clearColors		= {
 							{ 120, 120, 255 },
 							{ 180, 120, 240 },
 							{ 220, 120, 220 },
@@ -52,6 +63,7 @@
 
 
 		fonts	= {
+			big			= love.graphics.setNewFont(30),
 			main		= love.graphics.setNewFont(10),
 			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x"),
 			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x"),
@@ -72,11 +84,14 @@
 
 
 
-		gTimer	= 0
+		gTimer			= 0
+		pauseTimer		= false
 
 		testPlayfield	= Playfield:new()
 
 		testGame		= Game:new(testPlayfield, {1, 2, 3, 4})
+
+		testScreen		= Screen:new()
 
 	end
 
@@ -85,8 +100,8 @@
 	--- LOVE Drawing callback.
 	function love.draw()
 
-		testGame:draw(100, 100)
-		--testGame:showGameState()
+		screens[currentScreen]:draw()
+
 
 	end
 
@@ -95,9 +110,12 @@
 	--- LOVE Update callback.
 	-- @param dt	Delta-time of update (in seconds)
 	function love.update(dt)
-		gTimer	= gTimer + dt
+		if not pauseTimer then
+			gTimer	= gTimer + dt
+		end
 
-		testGame:update()
+		screens[currentScreen]:update(dt)
+		--testGame:update()
 	end
 
 
@@ -107,6 +125,11 @@
 	-- @param key		Character of the key pressed
 	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
 	function love.keypressed(key, isrepeat)
+
+		screens[currentScreen]:handleKeyPress(key, isrepeat)
+
+
+		--[[
 
 
 		keytable	= {
@@ -120,5 +143,23 @@
 		if keytable[key] then
 			testGame:movePiece(keytable[key])
 		end
+
+
+		if key == "escape" then
+			pauseTimer	= not pauseTimer
+		end
+		--]]
+	end
+
+
+
+
+	function changeScreen(newScreen)
+
+		if not screens[newScreen] then
+			error("The requested screen ".. newScreen .." doesn't exist")
+		end
+
+		currentScreen	= newScreen
 
 	end
