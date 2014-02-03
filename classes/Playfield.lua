@@ -260,9 +260,11 @@
 	-- This function is a huge work-in-progress that might be changed a lot later
 	-- @param	layer		Layer to clear blocks from
 	-- @param	clearBlocks	Array of blocks to clear from
-	function Playfield:clearClears(clearBlocks, layer)
+	-- @param	replaceWith	What to replace the clears with
+	function Playfield:clearClears(clearBlocks, layer, replaceWith)
 
-		local layer	= layer or 1
+		local layer		= layer or 1
+		local replace	= replaceWith or 0
 
 		if not clearBlocks then
 			return
@@ -270,7 +272,7 @@
 
 		for k, v in pairs(clearBlocks) do
 			for kk, vv in pairs(v) do
-				self.field[layer][vv.x][vv.y]	= 0
+				self.field[layer][vv.x][vv.y]	= replace
 			end
 		end
 
@@ -322,7 +324,7 @@
 
 	--- Quick hacky way to draw a playfield
 	--
-	function Playfield:draw(xPosition, yPosition, layer)
+	function Playfield:draw(xPosition, yPosition, layer, dTimer)
 
 		local layer	= layer or 1
 
@@ -337,7 +339,7 @@
 				--love.graphics.setColor(blockColors[self.field[layer][x][y]])
 				--love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
 
-				blockGraphics[self.field[layer][x][y]]:draw(xPosition, yPosition, x, y)
+				blockGraphics[self.field[layer][x][y]]:draw(xPosition, yPosition, x, y, dTimer)
 			end
 			output	= output .. "\n"
 		end

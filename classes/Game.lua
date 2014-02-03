@@ -234,7 +234,7 @@
 
 	function Game.doClears(self, firstRun)
 		if firstRun then
-			playfield:clearClears(clears)
+			playfield:clearClears(clears, 1, -1)
 			sounds.clear:stop()
 			sounds.clear:setPitch(1 + (totalChain - 1) * 0.1)
 			sounds.clear:play()		else
@@ -242,6 +242,7 @@
 
 		-- Delay for a bit and/or animate?
 		if self:getGameStateTime() > 0.25 then
+			playfield:clearClears(clears)
 			self:runState('doLevelUp')
 		end
 	end
@@ -472,7 +473,7 @@
 		love.graphics.setFont(fonts.numbers)
 
 		if not hidePlayfield then
-			playfield:draw(100, 50)
+			playfield:draw(100, 50, 1, self:getGameStateTime())
 			if playerInput or gameOver then
 				currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))
 			end

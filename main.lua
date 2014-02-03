@@ -49,13 +49,22 @@
 		local gameGridHeight, gameGridWidth	= 18, 18
 
 		blockGraphics	= {
-							Block:new(16 * 1, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
-							Block:new(16 * 2, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
-							Block:new(16 * 3, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
-							Block:new(16 * 4, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
-						}
-		blockGraphics[0]	= Block:new(0, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
+							Block:new({{16 * 1, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 2, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 3, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 4, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 
+						}
+		blockGraphics[0]	= Block:new({{0, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
+
+		blockGraphics[-1]	= Block:new({
+									{16 * 0, 16},
+									{16 * 1, 16},
+									{16 * 2, 16},
+									{16 * 3, 16},
+									},
+									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
+									)
 
 		clearColors		= {
 							{ 120, 120, 255 },
