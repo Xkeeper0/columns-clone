@@ -17,6 +17,7 @@
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
+		Block		= require("classes.Block")		-- Blocks
 
 		screens			= {
 
@@ -38,6 +39,23 @@
 
 						}
 		blockColors[0]	= { 40, 40, 40}
+
+		blockImage		= love.graphics.newImage("images/blocks.png")
+
+
+		local blockImageW	= blockImage:getWidth()
+		local blockImageH	= blockImage:getHeight()
+
+		local gameGridHeight, gameGridWidth	= 18, 18
+
+		blockGraphics	= {
+							Block:new(16 * 1, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new(16 * 2, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new(16 * 3, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new(16 * 4, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+						}
+		blockGraphics[0]	= Block:new(0, 0, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
+
 
 		clearColors		= {
 							{ 120, 120, 255 },

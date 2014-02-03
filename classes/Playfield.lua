@@ -334,9 +334,10 @@
 		-- Build string of playfield values
 		for y = 1, self.h do
 			for x = 1, self.w do
-				love.graphics.setColor(blockColors[self.field[layer][x][y]])
+				--love.graphics.setColor(blockColors[self.field[layer][x][y]])
+				--love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
 
-				love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
+				blockGraphics[self.field[layer][x][y]]:draw(xPosition, yPosition, x, y)
 			end
 			output	= output .. "\n"
 		end
