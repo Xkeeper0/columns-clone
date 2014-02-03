@@ -26,13 +26,14 @@
 		screens			= {
 
 			default			= Screen,
+			introScreen		= require("classes.Screen.IntroScreen"),
 			titleScreen		= require("classes.Screen.TitleScreen"),
 			inGame			= require("classes.Screen.InGame"),
 			inGamePaused	= require("classes.Screen.InGamePaused"),
 
 			}
 
-		currentScreen	= "titleScreen";
+		currentScreen	= "introScreen";
 
 
 
