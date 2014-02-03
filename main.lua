@@ -11,6 +11,9 @@
 		-- Set includes to check classes/?.lua
 		--package.path	= package.path .. ";classes/?.lua"
 
+		-- Seed a new random number set
+		math.randomseed(os.time())
+
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
 		Screen		= require("classes.Screen")		-- Game (contains all the other stuff)
