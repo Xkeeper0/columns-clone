@@ -11,8 +11,6 @@
 	--- LOVE Init
 	function love.load()
 
-		-- Set includes to check classes/?.lua
-		--package.path	= package.path .. ";classes/?.lua"
 
 		-- Seed a new random number set
 		math.randomseed(os.time())
@@ -36,15 +34,7 @@
 
 		currentScreen	= "titleScreen";
 
-		blockColors		= {
-							{ 255,   0,   0 },
-							{ 255, 255,   0 },
-							{  80, 255,  80 },
-							{ 100, 100, 255 },
-							{ 255,   0, 255 }
 
-						}
-		blockColors[0]	= { 40, 40, 40}
 
 		blockImage		= love.graphics.newImage("images/blocks.png")
 
