@@ -4,6 +4,9 @@
 	-- @copyright Xkeeper 2014
 	--
 
+	-- Version
+	version		= "r5-a1"
+
 
 	--- LOVE Init
 	function love.load()

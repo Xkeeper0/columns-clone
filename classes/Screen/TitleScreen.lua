@@ -21,6 +21,9 @@
 		love.graphics.printf("Enter: start\n\nUp: Hard-drop\nLeft / Right: Move piece\nDown: Drop\n\nX: Rotate\n\nEscape: Pause", 0, 200, 640, "center")
 
 
+		love.graphics.printf("Version ".. version, 0, 465, 630, "right")
+
+
 
 	end
 
