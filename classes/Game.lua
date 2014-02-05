@@ -21,6 +21,7 @@
 	local displayChainPoints	= 0			-- Points for this chain, in total
 	local clearedBlocks			= 0			-- Total blocks cleared
 	local blocksCleared			= 0			-- Blocks cleared in latest clear
+	local isMagicClear			= false		-- If this is a magic piece clear
 
 	local clearTotal			= 0			-- Total pieces cleared (for later)
 	local currentLevel			= 0			-- Current game level
@@ -183,10 +184,13 @@
 		if firstRun then
 
 			-- Check for clears
-			clears	= playfield:checkForClears()
+			clears, isMagicClear	= playfield:checkForClears()
 			if clears then
 				clearPoints			= 0
 				local base			= 100
+				if isMagicClear then
+					base			= 10
+				end
 
 				blocksCleared	= 0
 				for k, v in pairs(clears) do
@@ -236,9 +240,15 @@
 	function Game.doClears(self, firstRun)
 		if firstRun then
 			playfield:clearClears(clears, 1, -1)
-			sounds.clear:stop()
-			sounds.clear:setPitch(1 + (totalChain - 1) * 0.1)
-			sounds.clear:play()		else
+			if isMagicClear then
+				sounds.magic:stop()
+				sounds.magic:play()
+			else
+				sounds.clear:stop()
+				sounds.clear:setPitch(1 + (totalChain - 1) * 0.1)
+				sounds.clear:play()
+
+			end
 		end
 
 		-- Delay for a bit and/or animate?
@@ -312,7 +322,7 @@
 	function Game.nextPiece(self, firstRun)
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
-		nextPiece				= Piece:new(blockTypes)
+		nextPiece				= Piece:new(math.random(1, 10) == 10 and {99} or blockTypes)
 		autoDown				= false
 
 		gravityTimer			= gameStateTime

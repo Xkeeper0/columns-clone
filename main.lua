@@ -63,6 +63,14 @@
 									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
 									)
 
+		blockGraphics[99]	= Block:new({
+									{16 * 5, 0},
+									{16 * 6, 0},
+									{16 * 7, 0}
+									}, 
+									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
+									)
+
 		clearColors		= {
 							{ 120, 120, 255 },
 							{ 180, 120, 240 },

@@ -150,12 +150,23 @@
 		local layer			= layer or 1
 		local x, y			= 0, 0
 		local clearBlocks	= {}
-
+		local isMagic		= false
 		for x = 1, self.w do
 			for y = self.h, 1, -1 do
 
 				-- Check for clears here.
 				-- This should maybe be split out into a different function or something, lots of duplicate code?
+
+				if self.field[layer][x][y] == 99 and y < self.h then
+					isMagic	= true
+					local chain, blocks = self:clearAllOfColor(self.field[layer][x][y + 1])
+					if chain then
+						table.insert(clearBlocks, blocks)
+					end
+					table.insert(clearBlocks, {{x = x, y = y }})
+				end
+
+
 				if x <= self.w - 2 and y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, -1)		-- Diagonal /
 					if chain then
@@ -189,7 +200,7 @@
 
 			-- Do something with the chains here later
 		end
-		return (#clearBlocks > 0 and clearBlocks or false)
+		return (#clearBlocks > 0 and clearBlocks or false), isMagic
 
 
 	end
@@ -259,6 +270,26 @@
 			return false
 		end
 
+	end
+
+
+
+	--- Clear the playfield of all of one color
+	function Playfield:clearAllOfColor(color, layer)
+
+		local layer			= layer or 1
+		local x, y			= 0, 0
+		local clearBlocks	= {}
+
+		for x = 1, self.w do
+			for y = self.h, 1, -1 do
+				if self.field[layer][x][y] == color then
+					table.insert(clearBlocks, { x = x, y = y })
+				end
+			end
+		end
+
+		return (#clearBlocks > 0), clearBlocks
 	end
 
 
