@@ -35,6 +35,7 @@
 	local currentPiece			= false
 	local currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
 	local nextPiece				= false
+	local autoDown				= true
 
 	local gravityTiming			= {
 		{	1.000,		2.500	},	-- 0
@@ -312,6 +313,7 @@
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
 		nextPiece				= Piece:new(blockTypes)
+		autoDown				= false
 
 		gravityTimer			= gameStateTime
 		lockTimer				= false
@@ -386,6 +388,7 @@
 			currentPiecePosition.y	= currentPiecePosition.y + 1
 			if givePoints then
 				currentPoints	= currentPoints + (currentLevel + 1)
+				gravityTimer	= gameTimer
 			end
 			return true
 		end
@@ -396,7 +399,7 @@
 
 
 	---
-	function Game:movePiece(direction, skipStateChange)
+	function Game:movePiece(direction, skipStateChange, isRepeat)
 
 		if not playerInput then
 			return
@@ -422,7 +425,9 @@
 				currentPiecePosition.x	= currentPiecePosition.x + 1
 			end
 
-		elseif direction == "down" then
+		elseif direction == "down" and (not isRepeat or (isRepeat and autoDown)) then
+			-- Enable auto-dropping for this piece
+			autoDown	= true
 			if not self:doPieceGravity(true) then
 				direction	= "harddrop"	-- lock the piece into place if it can't move down any more
 			end

@@ -117,6 +117,8 @@
 
 		testScreen		= Screen:new()
 
+		keysHeld		= {}
+
 	end
 
 
@@ -150,30 +152,26 @@
 	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
 	function love.keypressed(key, isrepeat)
 
+		-- Mark this key as being down
+		keysHeld[key]	= gTimer
+
 		screens[currentScreen]:handleKeyPress(key, isrepeat)
 
-
-		--[[
-
-
-		keytable	= {
-			up		= "harddrop",
-			left	= "left",
-			right	= "right",
-			down	= "down",
-			x		= "cycle"
-			}
-
-		if keytable[key] then
-			testGame:movePiece(keytable[key])
-		end
-
-
-		if key == "escape" then
-			pauseTimer	= not pauseTimer
-		end
-		--]]
 	end
+
+
+	--- LOVE Keyrelease callback
+	-- (mostly for debugging right now)
+	-- @param key		Character of the key released
+	function love.keyreleased(key, isrepeat)
+
+		-- Mark this key as being down
+		keysHeld[key]	= nil
+
+	end
+
+
+
 
 
 
