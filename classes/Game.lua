@@ -30,11 +30,11 @@
 	local gameOver				= false
 
 	-- Our current and next pieces for playing
-	local currentPiece			= false
-	local currentPiecePosition	= { x = 3, y = 1 }
-	local nextPiece				= false
 	local defaultPieceX			= 3
-	local defaultPieceY			= 1
+	local defaultPieceY			= -1
+	local currentPiece			= false
+	local currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
+	local nextPiece				= false
 
 	local gravityTiming			= {
 		{	1.000,		2.500	},	-- 0

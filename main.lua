@@ -177,7 +177,8 @@
 
 
 
-
+	--- Changes to a new screen
+	-- @param newScreen	Screen to change to
 	function changeScreen(newScreen)
 
 		if not screens[newScreen] then
@@ -187,3 +188,15 @@
 		currentScreen	= newScreen
 
 	end
+
+
+
+
+	--- Checks if given value is in range of other values
+	-- @param val	Value to test
+	-- @param min	Lower bound
+	-- @param max	Upper bound
+	function math.inrange(val, min, max)
+		return val >= min and val <= max
+	end
+

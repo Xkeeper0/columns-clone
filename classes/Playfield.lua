@@ -93,12 +93,16 @@
 		for k, v in pairs(pieceBlocks) do
 
 
-			-- Is the piece inbounds?
-			if not (self.field[layer] and self.field[layer][x + v['x']] and self.field[layer][x + v['x']][y + v['y']]) then
+			if not (
+				-- Is the piece inbounds?
+				math.inrange(layer, 1, self.layers)			-- Is on an existing layer
+				and math.inrange(x + v.x, 1, self.w)		-- Is within the columns of the well
+				and y + v['y'] <= self.h					-- Is inside OR ABOVE the well
+			) then
 				return false
 
 			-- Is the spot this piece would occupy empty?
-			elseif self.field[layer][x + v['x']][y + v['y']] ~= 0 then
+			elseif (y + v.y >= 1 and self.field[layer][x + v.x][y + v.y] ~= 0) then
 				-- Something's there already, sorry
 				return false
 			end
@@ -128,7 +132,10 @@
 
 		local pieceBlocks	= piece:getLayout()
 		for k, v in pairs(pieceBlocks) do
-			self.field[layer][x + v['x']][y + v['y']]	= v['b']
+			if y + v.y >= 1 then
+				-- Only place blocks that exist in the well
+				self.field[layer][x + v.x][y + v.y]	= v.b
+			end
 		end
 
 		return true
