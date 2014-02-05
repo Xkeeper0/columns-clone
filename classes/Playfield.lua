@@ -40,7 +40,7 @@
 				-- Create empty row
 				self.field[i][x]	= {}
 
-				for y = 1, self.h do
+				for y = -2, self.h do
 					-- Fill row value with 0
 					self.field[i][x][y]	= 0;
 				end
@@ -132,7 +132,7 @@
 
 		local pieceBlocks	= piece:getLayout()
 		for k, v in pairs(pieceBlocks) do
-			if y + v.y >= 1 then
+			if true or y + v.y >= 1 then
 				-- Only place blocks that exist in the well
 				self.field[layer][x + v.x][y + v.y]	= v.b
 			end
@@ -304,7 +304,7 @@
 				-- Lowest row with a 0
 				local lowestRow	= 0
 
-				for y = self.h, 2, -1 do
+				for y = self.h, -1, -1 do
 
 					if self.field[l][x][y] == 0 then
 						lowestRow	= math.max(lowestRow, y)
