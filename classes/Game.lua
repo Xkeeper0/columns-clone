@@ -21,8 +21,10 @@
 	local displayChainPoints	= 0			-- Points for this chain, in total
 	local clearedBlocks			= 0			-- Total blocks cleared
 	local blocksCleared			= 0			-- Blocks cleared in latest clear
+	local isMagicClear			= false		-- If this is a magic piece clear
 
-	local clearTotal			= 0			-- Total pieces cleared (for later)
+	local totalPieces			= 0			-- Total pieces dropped (for later)
+	local magicPieceRate		= 100		-- Every X pieces, drop a magic piece
 	local currentLevel			= 0			-- Current game level
 	local levelUpBlocks			= 50		-- Blocks per level
 
@@ -30,11 +32,14 @@
 	local gameOver				= false
 
 	-- Our current and next pieces for playing
-	local currentPiece			= false
-	local currentPiecePosition	= { x = 3, y = 1 }
-	local nextPiece				= false
 	local defaultPieceX			= 3
-	local defaultPieceY			= 1
+	local defaultPieceY			= -1
+	local currentPiece			= false
+	local currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
+	local nextPiece				= false
+	local autoDown				= true
+	local dasTime				= .2
+	local dasTimer				= 0
 
 	local gravityTiming			= {
 		{	1.000,		2.500	},	-- 0
@@ -167,7 +172,8 @@
 	function Game.afterPiece(self, firstrun)
 
 		playerInput			= false
-
+		autoDown			= false
+		totalPieces			= totalPieces + 1
 		currentChain		= false
 		chainBroken			= true
 
@@ -182,10 +188,13 @@
 		if firstRun then
 
 			-- Check for clears
-			clears	= playfield:checkForClears()
+			clears, isMagicClear	= playfield:checkForClears()
 			if clears then
 				clearPoints			= 0
 				local base			= 100
+				if isMagicClear then
+					base			= 10
+				end
 
 				blocksCleared	= 0
 				for k, v in pairs(clears) do
@@ -234,14 +243,21 @@
 
 	function Game.doClears(self, firstRun)
 		if firstRun then
-			playfield:clearClears(clears)
-			sounds.clear:stop()
-			sounds.clear:setPitch(1 + (totalChain - 1) * 0.1)
-			sounds.clear:play()		else
+			playfield:clearClears(clears, 1, -1)
+			if isMagicClear then
+				sounds.magic:stop()
+				sounds.magic:play()
+			else
+				sounds.clear:stop()
+				sounds.clear:setPitch(1 + (totalChain - 1) * 0.1)
+				sounds.clear:play()
+
+			end
 		end
 
 		-- Delay for a bit and/or animate?
 		if self:getGameStateTime() > 0.25 then
+			playfield:clearClears(clears)
 			self:runState('doLevelUp')
 		end
 	end
@@ -310,7 +326,7 @@
 	function Game.nextPiece(self, firstRun)
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
-		nextPiece				= Piece:new(blockTypes)
+		nextPiece				= Piece:new(math.fmod(totalPieces, magicPieceRate) == 0 and {99} or blockTypes)
 
 		gravityTimer			= gameStateTime
 		lockTimer				= false
@@ -385,6 +401,7 @@
 			currentPiecePosition.y	= currentPiecePosition.y + 1
 			if givePoints then
 				currentPoints	= currentPoints + (currentLevel + 1)
+				gravityTimer	= gameTimer
 			end
 			return true
 		end
@@ -395,7 +412,7 @@
 
 
 	---
-	function Game:movePiece(direction, skipStateChange)
+	function Game:movePiece(direction, skipStateChange, isRepeat)
 
 		if not playerInput then
 			return
@@ -407,13 +424,20 @@
 
 			currentPiece:cycleBlocks()
 
-		elseif direction == "left" then
+		elseif direction == "left" and (not isRepeat or (isRepeat and (dasTimer + dasTime) < gameTimer)) then
+			if not isRepeat then
+				dasTimer	= gameTimer
+			end
+
 			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x - 1, currentPiecePosition.y) then
 				sounds.move:stop()
 				sounds.move:play()
 				currentPiecePosition.x	= currentPiecePosition.x - 1
 			end
-		elseif direction == "right" then
+		elseif direction == "right" and (not isRepeat or (isRepeat and (dasTimer + dasTime) < gameTimer)) then
+			if not isRepeat then
+				dasTimer	= gameTimer
+			end
 
 			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x + 1, currentPiecePosition.y) then
 				sounds.move:stop()
@@ -421,7 +445,9 @@
 				currentPiecePosition.x	= currentPiecePosition.x + 1
 			end
 
-		elseif direction == "down" then
+		elseif direction == "down" and (not isRepeat or (isRepeat and autoDown)) then
+			-- Enable auto-dropping for this piece
+			autoDown	= true
 			if not self:doPieceGravity(true) then
 				direction	= "harddrop"	-- lock the piece into place if it can't move down any more
 			end
@@ -472,7 +498,7 @@
 		love.graphics.setFont(fonts.numbers)
 
 		if not hidePlayfield then
-			playfield:draw(100, 50)
+			playfield:draw(100, 50, 1, self:getGameStateTime())
 			if playerInput or gameOver then
 				currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))
 			end
@@ -504,14 +530,11 @@
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%d", clearedBlocks), 300, 260, 99, "right")
-
 		love.graphics.printf(string.format("%d", currentLevel), 300, 276, 99, "right")
-
+		love.graphics.printf(string.format("%d", totalPieces), 300, 292, 99, "right")
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%.2f", gameTimer), 540, 1, 100, "right")
-
-
 
 		love.graphics.setFont(fonts.main)
 
@@ -525,6 +548,7 @@
 		love.graphics.print("total points", 402, 220)
 		love.graphics.print("blocks", 402, 257)
 		love.graphics.print("level", 402, 257 + 16)
+		love.graphics.print("pieces", 402, 257 + 32)
 
 		love.graphics.setFont(fonts.numbers)
 

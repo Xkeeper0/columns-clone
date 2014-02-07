@@ -4,12 +4,16 @@
 	-- @copyright Xkeeper 2014
 	--
 
+	-- Version
+	version		= "r5"
+
 
 	--- LOVE Init
 	function love.load()
 
-		-- Set includes to check classes/?.lua
-		--package.path	= package.path .. ";classes/?.lua"
+
+		-- Seed a new random number set
+		math.randomseed(os.time())
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
@@ -17,27 +21,56 @@
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
+		Block		= require("classes.Block")		-- Blocks
 
 		screens			= {
 
 			default			= Screen,
+			introScreen		= require("classes.Screen.IntroScreen"),
 			titleScreen		= require("classes.Screen.TitleScreen"),
 			inGame			= require("classes.Screen.InGame"),
 			inGamePaused	= require("classes.Screen.InGamePaused"),
 
 			}
 
-		currentScreen	= "titleScreen";
+		currentScreen	= "introScreen";
 
-		blockColors		= {
-							{ 255,   0,   0 },
-							{ 255, 255,   0 },
-							{  80, 255,  80 },
-							{ 100, 100, 255 },
-							{ 255,   0, 255 }
+
+
+		blockImage		= love.graphics.newImage("images/blocks.png")
+		logoImage		= love.graphics.newImage("images/rustedlogic.png")
+
+
+		local blockImageW	= blockImage:getWidth()
+		local blockImageH	= blockImage:getHeight()
+
+		local gameGridHeight, gameGridWidth	= 18, 18
+
+		blockGraphics	= {
+							Block:new({{16 * 1, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 2, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 3, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 4, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 
 						}
-		blockColors[0]	= { 40, 40, 40}
+		blockGraphics[0]	= Block:new({{0, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
+
+		blockGraphics[-1]	= Block:new({
+									{16 * 0, 16},
+									{16 * 1, 16},
+									{16 * 2, 16},
+									{16 * 3, 16},
+									},
+									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
+									)
+
+		blockGraphics[99]	= Block:new({
+									{16 * 5, 0},
+									{16 * 6, 0},
+									{16 * 7, 0}
+									}, 
+									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
+									)
 
 		clearColors		= {
 							{ 120, 120, 255 },
@@ -93,6 +126,8 @@
 
 		testScreen		= Screen:new()
 
+		keysHeld		= {}
+
 	end
 
 
@@ -126,34 +161,31 @@
 	-- @param isrepeat	If this is a repeat keypress (based on system options/timing)
 	function love.keypressed(key, isrepeat)
 
+		-- Mark this key as being down
+		keysHeld[key]	= gTimer
+
 		screens[currentScreen]:handleKeyPress(key, isrepeat)
 
-
-		--[[
-
-
-		keytable	= {
-			up		= "harddrop",
-			left	= "left",
-			right	= "right",
-			down	= "down",
-			x		= "cycle"
-			}
-
-		if keytable[key] then
-			testGame:movePiece(keytable[key])
-		end
+	end
 
 
-		if key == "escape" then
-			pauseTimer	= not pauseTimer
-		end
-		--]]
+	--- LOVE Keyrelease callback
+	-- (mostly for debugging right now)
+	-- @param key		Character of the key released
+	function love.keyreleased(key, isrepeat)
+
+		-- Mark this key as being down
+		keysHeld[key]	= nil
+
 	end
 
 
 
 
+
+
+	--- Changes to a new screen
+	-- @param newScreen	Screen to change to
 	function changeScreen(newScreen)
 
 		if not screens[newScreen] then
@@ -163,3 +195,15 @@
 		currentScreen	= newScreen
 
 	end
+
+
+
+
+	--- Checks if given value is in range of other values
+	-- @param val	Value to test
+	-- @param min	Lower bound
+	-- @param max	Upper bound
+	function math.inrange(val, min, max)
+		return val >= min and val <= max
+	end
+

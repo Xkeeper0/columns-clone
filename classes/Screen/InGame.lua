@@ -10,6 +10,18 @@
 	function InGame:update(dt)
 		testGame:update(dt)
 
+		if keysHeld['down'] then
+			self:handleKeyPress("down", true)
+		end
+
+		if keysHeld['left'] then
+			self:handleKeyPress("left", true)
+		end
+
+		if keysHeld['right'] then
+			self:handleKeyPress("right", true)
+		end
+
 	end
 
 
@@ -31,7 +43,7 @@
 			}
 
 		if keytable[key] then
-			testGame:movePiece(keytable[key])
+			testGame:movePiece(keytable[key], false, isRepeat)
 		end
 
 

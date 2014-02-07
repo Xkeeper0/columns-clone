@@ -40,7 +40,7 @@
 				-- Create empty row
 				self.field[i][x]	= {}
 
-				for y = 1, self.h do
+				for y = -2, self.h do
 					-- Fill row value with 0
 					self.field[i][x][y]	= 0;
 				end
@@ -93,12 +93,16 @@
 		for k, v in pairs(pieceBlocks) do
 
 
-			-- Is the piece inbounds?
-			if not (self.field[layer] and self.field[layer][x + v['x']] and self.field[layer][x + v['x']][y + v['y']]) then
+			if not (
+				-- Is the piece inbounds?
+				math.inrange(layer, 1, self.layers)			-- Is on an existing layer
+				and math.inrange(x + v.x, 1, self.w)		-- Is within the columns of the well
+				and y + v['y'] <= self.h					-- Is inside OR ABOVE the well
+			) then
 				return false
 
 			-- Is the spot this piece would occupy empty?
-			elseif self.field[layer][x + v['x']][y + v['y']] ~= 0 then
+			elseif (y + v.y >= 1 and self.field[layer][x + v.x][y + v.y] ~= 0) then
 				-- Something's there already, sorry
 				return false
 			end
@@ -128,7 +132,10 @@
 
 		local pieceBlocks	= piece:getLayout()
 		for k, v in pairs(pieceBlocks) do
-			self.field[layer][x + v['x']][y + v['y']]	= v['b']
+			if true or y + v.y >= 1 then
+				-- Only place blocks that exist in the well
+				self.field[layer][x + v.x][y + v.y]	= v.b
+			end
 		end
 
 		return true
@@ -143,12 +150,23 @@
 		local layer			= layer or 1
 		local x, y			= 0, 0
 		local clearBlocks	= {}
-
+		local isMagic		= false
 		for x = 1, self.w do
 			for y = self.h, 1, -1 do
 
 				-- Check for clears here.
 				-- This should maybe be split out into a different function or something, lots of duplicate code?
+
+				if self.field[layer][x][y] == 99 and y < self.h then
+					isMagic	= true
+					local chain, blocks = self:clearAllOfColor(self.field[layer][x][y + 1])
+					if chain then
+						table.insert(clearBlocks, blocks)
+					end
+					table.insert(clearBlocks, {{x = x, y = y }})
+				end
+
+
 				if x <= self.w - 2 and y > 2 then
 					local chain, blocks	= self:checkForClearAt(layer, x, y, 1, -1)		-- Diagonal /
 					if chain then
@@ -182,7 +200,7 @@
 
 			-- Do something with the chains here later
 		end
-		return (#clearBlocks > 0 and clearBlocks or false)
+		return (#clearBlocks > 0 and clearBlocks or false), isMagic
 
 
 	end
@@ -256,13 +274,35 @@
 
 
 
+	--- Clear the playfield of all of one color
+	function Playfield:clearAllOfColor(color, layer)
+
+		local layer			= layer or 1
+		local x, y			= 0, 0
+		local clearBlocks	= {}
+
+		for x = 1, self.w do
+			for y = self.h, 1, -1 do
+				if self.field[layer][x][y] == color then
+					table.insert(clearBlocks, { x = x, y = y })
+				end
+			end
+		end
+
+		return (#clearBlocks > 0), clearBlocks
+	end
+
+
+
 	--- Clear the playfield of cleared blocks
 	-- This function is a huge work-in-progress that might be changed a lot later
 	-- @param	layer		Layer to clear blocks from
 	-- @param	clearBlocks	Array of blocks to clear from
-	function Playfield:clearClears(clearBlocks, layer)
+	-- @param	replaceWith	What to replace the clears with
+	function Playfield:clearClears(clearBlocks, layer, replaceWith)
 
-		local layer	= layer or 1
+		local layer		= layer or 1
+		local replace	= replaceWith or 0
 
 		if not clearBlocks then
 			return
@@ -270,7 +310,7 @@
 
 		for k, v in pairs(clearBlocks) do
 			for kk, vv in pairs(v) do
-				self.field[layer][vv.x][vv.y]	= 0
+				self.field[layer][vv.x][vv.y]	= replace
 			end
 		end
 
@@ -295,7 +335,7 @@
 				-- Lowest row with a 0
 				local lowestRow	= 0
 
-				for y = self.h, 2, -1 do
+				for y = self.h, -1, -1 do
 
 					if self.field[l][x][y] == 0 then
 						lowestRow	= math.max(lowestRow, y)
@@ -322,7 +362,7 @@
 
 	--- Quick hacky way to draw a playfield
 	--
-	function Playfield:draw(xPosition, yPosition, layer)
+	function Playfield:draw(xPosition, yPosition, layer, dTimer)
 
 		local layer	= layer or 1
 
@@ -334,9 +374,10 @@
 		-- Build string of playfield values
 		for y = 1, self.h do
 			for x = 1, self.w do
-				love.graphics.setColor(blockColors[self.field[layer][x][y]])
+				--love.graphics.setColor(blockColors[self.field[layer][x][y]])
+				--love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
 
-				love.graphics.print(string.format("%2d", self.field[layer][x][y]), xPosition + ((x - 1) * 20), yPosition + ((y - 1) * 20))
+				blockGraphics[self.field[layer][x][y]]:draw(xPosition, yPosition, x, y, dTimer)
 			end
 			output	= output .. "\n"
 		end
