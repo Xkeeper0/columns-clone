@@ -26,6 +26,9 @@
 		local animationTimer	= animationTimer or gTimer
 		local animationFrame	= (#self.quads > 1) and (math.floor(math.fmod((animationTimer / self.animationTime), #self.quads)) + 1) or 1
 
+		-- Offset because we start at 1-base
+		x	= x - 1
+		y	= y - 1
 
 		love.graphics.draw(blockImage, self.quads[animationFrame], top + x * self.gridW, left + y * self.gridH)
 		--love.graphics.print(animationFrame, 1, 1)

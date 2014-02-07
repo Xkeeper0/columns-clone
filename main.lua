@@ -40,6 +40,7 @@
 		blockImage		= love.graphics.newImage("images/blocks.png")
 		logoImage		= love.graphics.newImage("images/rustedlogic.png")
 		background		= love.graphics.newImage("images/background.png")
+		backgroundP		= love.graphics.newImage("images/background-playfield.png")
 
 
 		local blockImageW	= blockImage:getWidth()
@@ -206,5 +207,13 @@
 	-- @param max	Upper bound
 	function math.inrange(val, min, max)
 		return val >= min and val <= max
+	end
+
+
+
+	function drawTestBackground()
+		love.graphics.push()
+		love.graphics.draw(background, 0, 0)
+		love.graphics.pop()
 	end
 

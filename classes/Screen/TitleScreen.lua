@@ -14,6 +14,8 @@
 
 	function TitleScreen:draw()
 
+		drawTestBackground()
+
 		love.graphics.setFont(fonts.big)
 		love.graphics.printf("Columns Clone", 0, 480 / 4 - 20, 640, "center")
 
