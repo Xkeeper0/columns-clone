@@ -533,13 +533,8 @@
 		love.graphics.printf(string.format("%d", currentLevel), 300, 276, 99, "right")
 		love.graphics.printf(string.format("%d", totalPieces), 300, 292, 99, "right")
 
-
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%.2f", gameTimer), 540, 1, 100, "right")
-		love.graphics.printf(string.format("%.2f", dasTimer + dasTime), 540, 10, 100, "right")
-		love.graphics.printf(string.format("%.2f", dasTimer), 540, 20, 100, "right")
-		love.graphics.printf(string.format("%d", ((dasTimer + dasTime) < gameTimer) and 1 or 0), 540, 30, 100, "right")
-
 
 		love.graphics.setFont(fonts.main)
 
