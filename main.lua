@@ -5,7 +5,7 @@
 	--
 
 	-- Version
-	version		= "r5-a1"
+	version		= "r5"
 
 
 	--- LOVE Init
