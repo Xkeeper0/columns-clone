@@ -194,13 +194,11 @@
 			error("The requested screen '".. newScreen .."' doesn't exist")
 		end
 
-		if currentScreen.switchOut then
-			currentScreen:switchOut()
-		end
+		screens[currentScreen]:switchOut()
+
 		currentScreen	= newScreen
-		if currentScreen.switchIn then
-			currentScreen:switchIn()
-		end
+
+		screens[currentScreen]:switchIn()
 
 	end
 
