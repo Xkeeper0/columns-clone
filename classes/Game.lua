@@ -24,7 +24,7 @@
 	local isMagicClear			= false		-- If this is a magic piece clear
 
 	local totalPieces			= 0			-- Total pieces dropped (for later)
-	local magicPieceRate		= 50		-- Every X pieces, drop a magic piece
+	local magicPieceRate		= 100		-- Every X pieces, drop a magic piece
 	local currentLevel			= 0			-- Current game level
 	local levelUpBlocks			= 50		-- Blocks per level
 
