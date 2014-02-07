@@ -23,7 +23,8 @@
 	local blocksCleared			= 0			-- Blocks cleared in latest clear
 	local isMagicClear			= false		-- If this is a magic piece clear
 
-	local clearTotal			= 0			-- Total pieces cleared (for later)
+	local totalPieces			= 0			-- Total pieces dropped (for later)
+	local magicPieceRate		= 50		-- Every X pieces, drop a magic piece
 	local currentLevel			= 0			-- Current game level
 	local levelUpBlocks			= 50		-- Blocks per level
 
@@ -169,7 +170,8 @@
 	function Game.afterPiece(self, firstrun)
 
 		playerInput			= false
-
+		autoDown			= false
+		totalPieces			= totalPieces + 1
 		currentChain		= false
 		chainBroken			= true
 
@@ -322,8 +324,7 @@
 	function Game.nextPiece(self, firstRun)
 		currentPiece			= nextPiece
 		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
-		nextPiece				= Piece:new(math.random(1, 10) == 10 and {99} or blockTypes)
-		autoDown				= false
+		nextPiece				= Piece:new(math.fmod(totalPieces, magicPieceRate) == 0 and {99} or blockTypes)
 
 		gravityTimer			= gameStateTime
 		lockTimer				= false
@@ -520,8 +521,8 @@
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%d", clearedBlocks), 300, 260, 99, "right")
-
 		love.graphics.printf(string.format("%d", currentLevel), 300, 276, 99, "right")
+		love.graphics.printf(string.format("%d", totalPieces), 300, 292, 99, "right")
 
 
 		love.graphics.setFont(fonts.numbers)
@@ -541,6 +542,7 @@
 		love.graphics.print("total points", 402, 220)
 		love.graphics.print("blocks", 402, 257)
 		love.graphics.print("level", 402, 257 + 16)
+		love.graphics.print("pieces", 402, 257 + 32)
 
 		love.graphics.setFont(fonts.numbers)
 
