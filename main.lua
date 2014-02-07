@@ -37,10 +37,10 @@
 
 
 
-		blockImage		= love.graphics.newImage("images/blocks.png")
-		logoImage		= love.graphics.newImage("images/rustedlogic.png")
-		background		= love.graphics.newImage("images/background.png")
-		backgroundP		= love.graphics.newImage("images/background-playfield.png")
+		blockImage		= love.graphics.newImage("images/blocks/blocks.png")
+		logoImage		= love.graphics.newImage("images/logos/rustedlogic.png")
+		background		= love.graphics.newImage("images/backgrounds/background.png")
+		backgroundP		= love.graphics.newImage("images/backgrounds/playfield.png")
 
 
 		local blockImageW	= blockImage:getWidth()
@@ -100,8 +100,8 @@
 		fonts	= {
 			big			= love.graphics.setNewFont(30),
 			main		= love.graphics.setNewFont(10),
-			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x"),
-			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x"),
+			numbers		= love.graphics.newImageFont("images/fonts/numberfont.png", "0123456789 .x"),
+			bignumbers	= love.graphics.newImageFont("images/fonts/numberfont-2x.png", "0123456789 .x"),
 
 			}
 
