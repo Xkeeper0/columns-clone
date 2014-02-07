@@ -3,10 +3,12 @@
 	LCS	= require("classes.LCS")
 
 
-
 	-- Create class
 	IntroScreen	= Screen:extends({ animStart = 1, animTime = 3, animEnd = 1})
 
+
+	--- Callback for updating this screen.
+	-- @param dt Delta-time in seconds since last update
 	function IntroScreen:update(dt)
 
 		if gTimer > (self.animStart + self.animTime + self.animEnd) then
@@ -16,6 +18,8 @@
 	end
 
 
+	--- Callback for drawing this screen
+	-- Draw our fancy logo and some animations
 	function IntroScreen:draw()
 
 		local c	= 0
@@ -48,10 +52,12 @@
 		love.graphics.setColor(255, 255, 255)
 
 
-
 	end
 
 
+	--- Callback for handling keypresses.
+	-- @param key Key pressed
+	-- @param isRepeat If this is an auto-repeated keypress
 	function IntroScreen:handleKeyPress(key, isRepeat)
 
 		if key == "return" then

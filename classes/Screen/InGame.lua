@@ -7,6 +7,8 @@
 
 
 
+	--- Callback for updating this screen.
+	-- @param dt Delta-time in seconds since last update
 	function InGame:update(dt)
 		testGame:update(dt)
 
@@ -25,15 +27,19 @@
 	end
 
 
+	--- Callback for drawing this screen
+	-- @param hidePlayfield If the playfield should be hidden from view
 	function InGame:draw(hidePlayfield)
 
-		love.graphics.draw(background, 0, 0)
-
+		drawTestBackground()
 		testGame:draw(hidePlayfield)
 
 	end
 
 
+	--- Callback for handling keypresses.
+	-- @param key Key pressed
+	-- @param isRepeat If this is an auto-repeated keypress
 	function InGame:handleKeyPress(key, isRepeat)
 
 		keytable	= {

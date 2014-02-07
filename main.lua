@@ -191,10 +191,16 @@
 	function changeScreen(newScreen)
 
 		if not screens[newScreen] then
-			error("The requested screen ".. newScreen .." doesn't exist")
+			error("The requested screen '".. newScreen .."' doesn't exist")
 		end
 
+		if currentScreen.switchOut then
+			currentScreen:switchOut()
+		end
 		currentScreen	= newScreen
+		if currentScreen.switchIn then
+			currentScreen:switchIn()
+		end
 
 	end
 

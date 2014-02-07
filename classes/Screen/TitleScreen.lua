@@ -18,12 +18,7 @@
 
 
 
-	function TitleScreen:update(dt)
-
-
-	end
-
-
+	--- Callback for drawing this screen
 	function TitleScreen:draw()
 
 		drawTestBackground()
@@ -40,11 +35,12 @@
 		love.graphics.setColor(255, 255, 255)
 
 		self:drawOptions(640 / 2, 18 * 18)
-
-		love.graphics.print(self.cursorPosition, 0, 50)
 	end
 
 
+	--- Draw the options on the screen
+	-- @param x X position on screen
+	-- @param y Y position on screen
 	function TitleScreen:drawOptions(x, y)
 
 		for k, v in pairs(self.options) do
@@ -63,6 +59,9 @@
 	end
 
 
+	--- Callback for handling keypresses.
+	-- @param key Key pressed
+	-- @param isRepeat If this is an auto-repeated keypress
 	function TitleScreen:handleKeyPress(key, isRepeat)
 
 		if key == "up" or key == "down" then
@@ -84,23 +83,25 @@
 	end
 
 
+
+	--- Start the game screen
 	function TitleScreen:startGame()
 		changeScreen("inGame")
 	end
 
-
+	--- Start the options screen
 	function TitleScreen:startOptions()
 		changeScreen("options")
 	end
 
-
+	--- Quit the game (oh no!)
 	function TitleScreen:quit()
 		love.event.quit()
 	end
 
 
 
-
+	--- Callback for when this screen is switched in
 	function TitleScreen:switchIn()
 		self.cursorPosition	= 1
 	end
