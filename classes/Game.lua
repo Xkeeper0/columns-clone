@@ -38,6 +38,8 @@
 	local currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
 	local nextPiece				= false
 	local autoDown				= true
+	local dasTime				= .2
+	local dasTimer				= 0
 
 	local gravityTiming			= {
 		{	1.000,		2.500	},	-- 0
@@ -422,13 +424,20 @@
 
 			currentPiece:cycleBlocks()
 
-		elseif direction == "left" then
+		elseif direction == "left" and (not isRepeat or (isRepeat and (dasTimer + dasTime) < gameTimer)) then
+			if not isRepeat then
+				dasTimer	= gameTimer
+			end
+
 			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x - 1, currentPiecePosition.y) then
 				sounds.move:stop()
 				sounds.move:play()
 				currentPiecePosition.x	= currentPiecePosition.x - 1
 			end
-		elseif direction == "right" then
+		elseif direction == "right" and (not isRepeat or (isRepeat and (dasTimer + dasTime) < gameTimer)) then
+			if not isRepeat then
+				dasTimer	= gameTimer
+			end
 
 			if playfield:canPlacePiece(currentPiece, currentPiecePosition.x + 1, currentPiecePosition.y) then
 				sounds.move:stop()
@@ -527,7 +536,9 @@
 
 		love.graphics.setFont(fonts.numbers)
 		love.graphics.printf(string.format("%.2f", gameTimer), 540, 1, 100, "right")
-
+		love.graphics.printf(string.format("%.2f", dasTimer + dasTime), 540, 10, 100, "right")
+		love.graphics.printf(string.format("%.2f", dasTimer), 540, 20, 100, "right")
+		love.graphics.printf(string.format("%d", ((dasTimer + dasTime) < gameTimer) and 1 or 0), 540, 30, 100, "right")
 
 
 		love.graphics.setFont(fonts.main)

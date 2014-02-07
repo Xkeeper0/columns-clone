@@ -14,6 +14,14 @@
 			self:handleKeyPress("down", true)
 		end
 
+		if keysHeld['left'] then
+			self:handleKeyPress("left", true)
+		end
+
+		if keysHeld['right'] then
+			self:handleKeyPress("right", true)
+		end
+
 	end
 
 
