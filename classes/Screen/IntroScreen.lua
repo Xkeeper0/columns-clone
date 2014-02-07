@@ -31,9 +31,13 @@
 			c	= brightness
 		end
 
-		love.graphics.setColor(c, c, c)
+		local sOffset	= (c / brightness) * 2 
 
-		love.graphics.draw(logoImage, 640 / 2, 480 / 4, 0, 1, 1, 276 / 2, 100 / 2)
+		love.graphics.setColor(c, c, c, 60)
+		love.graphics.draw(logoImage, 640 / 2 + sOffset, 480 / 4 + sOffset, 0, 1, 1, 276 / 2, 100 / 2)
+
+		love.graphics.setColor(c, c, c)
+		love.graphics.draw(logoImage, 640 / 2 - sOffset, 480 / 4 - sOffset, 0, 1, 1, 276 / 2, 100 / 2)
 
 		love.graphics.setColor(0, 0, 0)
 		love.graphics.setFont(fonts.big)
