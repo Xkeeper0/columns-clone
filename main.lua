@@ -39,6 +39,7 @@
 
 		blockImage		= love.graphics.newImage("images/blocks.png")
 		logoImage		= love.graphics.newImage("images/rustedlogic.png")
+		background		= love.graphics.newImage("images/background.png")
 
 
 		local blockImageW	= blockImage:getWidth()

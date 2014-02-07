@@ -27,6 +27,8 @@
 
 	function InGame:draw(hidePlayfield)
 
+		love.graphics.draw(background, 0, 0)
+
 		testGame:draw(hidePlayfield)
 
 	end
