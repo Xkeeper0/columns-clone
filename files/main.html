@@ -39,50 +39,54 @@
 <ul>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Block.html">columns-clone/classes/Block.lua</a>
+		<a href="../../files/./classes/Block.html">./classes/Block.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Game.html">columns-clone/classes/Game.lua</a>
+		<a href="../../files/./classes/Game.html">./classes/Game.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/LCS.html">columns-clone/classes/LCS.lua</a>
+		<a href="../../files/./classes/LCS.html">./classes/LCS.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Piece.html">columns-clone/classes/Piece.lua</a>
+		<a href="../../files/./classes/Piece.html">./classes/Piece.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Playfield.html">columns-clone/classes/Playfield.lua</a>
+		<a href="../../files/./classes/Playfield.html">./classes/Playfield.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Screen.html">columns-clone/classes/Screen.lua</a>
+		<a href="../../files/./classes/Screen.html">./classes/Screen.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Screen/InGame.html">columns-clone/classes/Screen/InGame.lua</a>
+		<a href="../../files/./classes/Screen/InGame.html">./classes/Screen/InGame.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Screen/InGamePaused.html">columns-clone/classes/Screen/InGamePaused.lua</a>
+		<a href="../../files/./classes/Screen/InGamePaused.html">./classes/Screen/InGamePaused.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Screen/IntroScreen.html">columns-clone/classes/Screen/IntroScreen.lua</a>
+		<a href="../../files/./classes/Screen/IntroScreen.html">./classes/Screen/IntroScreen.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/classes/Screen/TitleScreen.html">columns-clone/classes/Screen/TitleScreen.lua</a>
+		<a href="../../files/./classes/Screen/Options.html">./classes/Screen/Options.lua</a>
 	</li>
 
 	<li>
-		<a href="../../files/columns-clone/conf.html">columns-clone/conf.lua</a>
+		<a href="../../files/./classes/Screen/TitleScreen.html">./classes/Screen/TitleScreen.lua</a>
 	</li>
 
-	<li><strong>columns-clone/main.lua</strong></li>
+	<li>
+		<a href="../../files/./conf.html">./conf.lua</a>
+	</li>
+
+	<li><strong>./main.lua</strong></li>
 	
 </ul>
 
@@ -95,7 +99,7 @@
 
 <div id="content">
 
-<h1>File <code>columns-clone/main.lua</code></h1>
+<h1>File <code>./main.lua</code></h1>
 
 
 
@@ -105,6 +109,11 @@
 
 <h2>Functions</h2>
 <table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#changeScreen">changeScreen</a>&nbsp;(newScreen, actuallySwitch, skipFade)</td>
+	<td class="summary">Changes to a new screen </td>
+	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#love.draw">love.draw</a>&nbsp;()</td>
@@ -117,6 +126,11 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#love.keyreleased">love.keyreleased</a>&nbsp;(key, isrepeat)</td>
+	<td class="summary">LOVE Keyrelease callback (mostly for debugging right now) </td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#love.load">love.load</a>&nbsp;()</td>
 	<td class="summary">LOVE Init </td>
 	</tr>
@@ -124,6 +138,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#love.update">love.update</a>&nbsp;(dt)</td>
 	<td class="summary">LOVE Update callback.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#math.inrange">math.inrange</a>&nbsp;(val, min, max)</td>
+	<td class="summary">Checks if given value is in range of other values </td>
 	</tr>
 
 </table>
@@ -141,6 +160,40 @@
 
 <h2><a name="functions"></a>Functions</h2>
 <dl class="function">
+
+
+
+<dt><a name="changeScreen"></a><strong>changeScreen</strong>&nbsp;(newScreen, actuallySwitch, skipFade)</dt>
+<dd>
+Changes to a new screen
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  newScreen: Screen to change to
+	</li>
+	
+	<li>
+	  actuallySwitch: Actually switch to the new screen now (otherwise queue)
+	</li>
+	
+	<li>
+	  skipFade: Skip the fade-in/out
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
 
 
 
@@ -191,6 +244,36 @@ LOVE Keypress callback (mostly for debugging right now)
 
 
 
+<dt><a name="love.keyreleased"></a><strong>love.keyreleased</strong>&nbsp;(key, isrepeat)</dt>
+<dd>
+LOVE Keyrelease callback (mostly for debugging right now)
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  key: Character of the key released
+	</li>
+	
+	<li>
+	  isrepeat: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="love.load"></a><strong>love.load</strong>&nbsp;()</dt>
 <dd>
 LOVE Init
@@ -218,6 +301,40 @@ LOVE Update callback.
 	
 	<li>
 	  dt: Delta-time of update (in seconds)
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="math.inrange"></a><strong>math.inrange</strong>&nbsp;(val, min, max)</dt>
+<dd>
+Checks if given value is in range of other values
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  val: Value to test
+	</li>
+	
+	<li>
+	  min: Lower bound
+	</li>
+	
+	<li>
+	  max: Upper bound
 	</li>
 	
 </ul>
