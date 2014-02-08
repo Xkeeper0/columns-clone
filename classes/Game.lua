@@ -497,8 +497,8 @@
 
 		love.graphics.setFont(fonts.numbers)
 
+		love.graphics.draw(backgroundP, 18 * 4, 18 * 3)
 		if not hidePlayfield then
-			love.graphics.draw(backgroundP, 18 * 4, 18 * 3)
 			playfield:draw(18 * 4 + 1, 18 * 3 + 1, 1, self:getGameStateTime())
 			if playerInput or gameOver then
 				currentPiece:draw(18 * 4 + 1, 18 * 3 + 1, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))

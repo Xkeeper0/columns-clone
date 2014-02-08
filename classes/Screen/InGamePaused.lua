@@ -22,9 +22,9 @@
 		self:getClass():draw(true)
 
 		love.graphics.setFont(fonts.big)
-		love.graphics.print("Paused", 110, 150)
+		love.graphics.printf("Paused", 18 * 4, 18 * 7, 18 * 6, "center")
 		love.graphics.setFont(fonts.main)
-		love.graphics.printf("Press Escape to continue", 115, 200, 100, "center")
+		love.graphics.printf("Enter:\nContinue", 18 * 4, 18 * 12, 18 * 6, "center")
 
 
 	end
