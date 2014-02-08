@@ -3,16 +3,24 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	TitleScreen	= Screen:extends({ options = {}, cursorPosition = 1 })
+	TitleScreen	= Screen:extends({ options = {}, cursorPosition = 1, menu = false })
 
 
 	--- Set up the title screen
 	function TitleScreen:init()
 		self.options	= {
-			{ text = "Play",		func = self.startGame		},
-			{ text = "Options",		func = self.startOptions	},
-			{ text = "Quit",		func = self.quit			},
+			{ pos = 0,	text = "Play",		ret = self.startGame	},
+			{ pos = 1,	text = "Options",	ret = self.startOptions	},
+			{ pos = 2,	text = "Quit",		ret = self.quit			},
 			}
+
+		self.menu	= SimpleMenu:new(
+			self.options,
+			1,
+			18 * 14,
+			18 * 18,
+			18 * 7
+			)
 
 	end
 
@@ -29,7 +37,9 @@
 		love.graphics.setFont(fonts.main)
 		love.graphics.printf("Up: Hard-drop\nLeft / Right: Move piece\nDown: Drop\nX: Rotate\n\nEscape: Pause", 0, 200, 640, "center")
 
-		self:drawOptions(640 / 2, 18 * 18)
+		--self:drawOptions(640 / 2, 18 * 18)
+
+		self.menu:draw()
 
 		--[[
 		if gTimer - self.introTimer	< self.fadeInTime then
@@ -80,19 +90,16 @@
 	function TitleScreen:handleKeyPress(key, isRepeat)
 
 		if key == "up" or key == "down" then
-			sounds.move:stop()
-			sounds.move:play()
 			local dir	= (key == "up") and -1 or 1
-			self.cursorPosition		= math.fmod((self.cursorPosition - 1 + dir), #self.options) + 1
-			if self.cursorPosition < 1 then
-				self.cursorPosition	= #self.options
-			end
+			self.menu:moveCursor(dir)
 
 		end
 
 
 		if key == "return" then
-			self.options[self.cursorPosition].func(self)
+			local ret	= self.menu:selectOption()
+			ret(self)
+			--self.options[self.cursorPosition].func(self)
 		end
 
 	end
@@ -118,7 +125,7 @@
 
 	--- Callback for when this screen is switched in
 	function TitleScreen:switchIn()
-		self.cursorPosition	= 1
+		self.menu:setCursorPosition(1)
 		self.introTimer		= gTimer
 	end
 

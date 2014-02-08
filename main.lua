@@ -17,11 +17,13 @@
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
-		Screen		= require("classes.Screen")		-- Game (contains all the other stuff)
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 		Block		= require("classes.Block")		-- Blocks
+		SimpleMenu	= require("classes.SimpleMenu")	-- Simple menu
+
+		Screen		= require("classes.Screen")		-- Screens
 
 		screens			= {
 
@@ -134,6 +136,7 @@
 		testScreen		= Screen:new()
 
 		keysHeld		= {}
+
 
 	end
 
