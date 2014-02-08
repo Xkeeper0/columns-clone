@@ -29,11 +29,6 @@
 		love.graphics.setFont(fonts.main)
 		love.graphics.printf("Up: Hard-drop\nLeft / Right: Move piece\nDown: Drop\nX: Rotate\n\nEscape: Pause", 0, 200, 640, "center")
 
-		love.graphics.setColor(160, 140, 255)
-		love.graphics.printf("Version ".. version, 0, 465, 634, "right")
-		love.graphics.printf("http://rustedlogic.net/\nhttps://github.com/Xkeeper0/columns-clone", 5, 452, 620, "left")
-		love.graphics.setColor(255, 255, 255)
-
 		self:drawOptions(640 / 2, 18 * 18)
 
 		--[[
