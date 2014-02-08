@@ -99,7 +99,7 @@
 	function Game:init(newPlayfield, blocks)
 
 		-- Take in the playfield
-		playfield			= newPlayfield
+		playfield			= newPlayfield or Playfield:new()
 		blockTypes			= blocks and blocks or blockTypes
 
 		-- Set the starting piece position to halfway into the field
@@ -294,7 +294,7 @@
 				chainPoints		= chainPoints + thisChainPoints
 			end
 
-			testPlayfield:doGravity()
+			playfield:doGravity()
 			sounds.gravity:stop()
 			sounds.gravity:play()
 		else

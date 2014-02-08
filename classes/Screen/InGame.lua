@@ -3,14 +3,14 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	InGame	= Screen:extends()
+	InGame	= Screen:extends({ game = false })
 
 
 
 	--- Callback for updating this screen.
 	-- @param dt Delta-time in seconds since last update
 	function InGame:update(dt)
-		testGame:update(dt)
+		self.game:update(dt)
 
 		if keysHeld['down'] then
 			self:handleKeyPress("down", true)
@@ -32,7 +32,7 @@
 	function InGame:draw(hidePlayfield)
 
 		drawTestBackground()
-		testGame:draw(hidePlayfield)
+		self.game:draw(hidePlayfield)
 
 	end
 
@@ -51,7 +51,7 @@
 			}
 
 		if keytable[key] then
-			testGame:movePiece(keytable[key], false, isRepeat)
+			self.game:movePiece(keytable[key], false, isRepeat)
 		end
 
 
@@ -59,6 +59,13 @@
 			changeScreen("inGamePaused", true, true)
 		end
 
+	end
+
+
+
+	function InGame:startNewGame()
+
+		self.game	= Game:new()
 	end
 
 

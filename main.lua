@@ -129,12 +129,6 @@
 		gTimer			= 0
 		pauseTimer		= false
 
-		testPlayfield	= Playfield:new()
-
-		testGame		= Game:new(testPlayfield, {1, 2, 3, 4})
-
-		testScreen		= Screen:new()
-
 		keysHeld		= {}
 
 

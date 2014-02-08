@@ -89,17 +89,9 @@
 	-- @param isRepeat If this is an auto-repeated keypress
 	function TitleScreen:handleKeyPress(key, isRepeat)
 
-		if key == "up" or key == "down" then
-			local dir	= (key == "up") and -1 or 1
-			self.menu:moveCursor(dir)
-
-		end
-
-
-		if key == "return" then
-			local ret	= self.menu:selectOption()
+		local ret	= self.menu:handleKeyPress(key)
+		if ret then
 			ret(self)
-			--self.options[self.cursorPosition].func(self)
 		end
 
 	end
@@ -108,6 +100,7 @@
 
 	--- Start the game screen
 	function TitleScreen:startGame()
+		screens.inGame:startNewGame()
 		changeScreen("inGame")
 	end
 

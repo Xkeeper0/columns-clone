@@ -80,4 +80,18 @@
 	end
 
 
+	function SimpleMenu:handleKeyPress(key)
+
+		if key == "up" or key == "down" then
+			local dir	= (key == "up") and -1 or 1
+			self:moveCursor(dir)
+		elseif key == "return" then
+			local ret	= self:selectOption()
+			return ret
+		end
+
+		return nil
+	end
+
+
 	return SimpleMenu
