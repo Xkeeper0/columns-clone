@@ -27,17 +27,16 @@
 		local brightness	= 255
 		if gTimer < self.animStart then
 			c	= (gTimer) / self.animStart * brightness
-			--love.graphics.setBackgroundColor(c, c, c)
 		elseif gTimer > (self.animStart + self.animTime) then
 			c	= brightness - ((gTimer - (self.animStart + self.animTime)) / self.animEnd * brightness)
-			--love.graphics.setBackgroundColor(c, c, c)
-
 		else
 			c	= brightness
 		end
-		love.graphics.setBackgroundColor(255, 255, 255)
 
 		local sOffset	= (c / brightness) * 2 
+
+
+		love.graphics.setBackgroundColor(255, 255, 255)
 
 		love.graphics.setColor(c, c, c, 60)
 		love.graphics.draw(logoImage, 640 / 2 + sOffset, 480 / 4 + sOffset, 0, 1, 1, 276 / 2, 100 / 2)
@@ -63,7 +62,6 @@
 	function IntroScreen:handleKeyPress(key, isRepeat)
 
 		if key == "return" then
-			love.graphics.setBackgroundColor(0, 0, 0)
 			changeScreen("titleScreen")
 		end
 

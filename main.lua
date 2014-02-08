@@ -35,7 +35,7 @@
 			}
 
 		currentScreen	= "introScreen"
-		nextScreen		= "introScreen"
+		nextScreen		= false
 		screenFadeTimer	= 0
 		screenFadeTime	= screens[currentScreen].fadeInTime
 		screenFadeDir	= "in"
@@ -145,7 +145,7 @@
 		screens[currentScreen]:draw()
 
 		if (gTimer - screenFadeTimer <= screenFadeTime) then
-			local fadePct	= (gTimer - screenFadeTimer) / screenFadeTime
+			local fadePct	= math.min(1, math.max(0, (gTimer - screenFadeTimer) / screenFadeTime))
 
 			if (screenFadeDir == "in") then
 				screens[currentScreen]:fadeIn(fadePct)
@@ -153,12 +153,6 @@
 				screens[currentScreen]:fadeOut(fadePct)
 			end
 		end
-
-
-		love.graphics.setColor(0, 0, 0)
-		love.graphics.print(string.format("%3.1f\n%3.1f\n%3.1f\n%s\n%s\n%s", gTimer, screenFadeTimer, screenFadeTime, currentScreen, nextScreen, screenFadeDir), 2, 2)
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.print(string.format("%3.1f\n%3.1f\n%3.1f\n%s\n%s\n%s", gTimer, screenFadeTimer, screenFadeTime, currentScreen, nextScreen, screenFadeDir), 0, 0)
 
 	end
 
@@ -172,7 +166,7 @@
 		end
 
 		local isFading	= (gTimer - screenFadeTimer <= screenFadeTime)
-		if currentScreen ~= nextScreen and not isFading then
+		if nextScreen and not isFading then
 			changeScreen(nextScreen, true)
 		elseif not isFading then
 			screens[currentScreen]:update(dt)
@@ -192,7 +186,10 @@
 		-- Mark this key as being down
 		keysHeld[key]	= gTimer
 
-		screens[currentScreen]:handleKeyPress(key, isrepeat)
+		local isFading	= (gTimer - screenFadeTimer <= screenFadeTime)
+		if not isFading then
+			screens[currentScreen]:handleKeyPress(key, isrepeat)
+		end
 
 	end
 
@@ -215,26 +212,26 @@
 	--- Changes to a new screen
 	-- @param newScreen			Screen to change to
 	-- @param actuallySwitch	Actually switch to the new screen now (otherwise queue)
-	function changeScreen(newScreen, actuallySwitch)
-
-		print("Changing screens to ".. newScreen)
+	-- @param skipFade			Skip the fade-in/out
+	function changeScreen(newScreen, actuallySwitch, skipFade)
 
 		if not screens[newScreen] then
 			error("The requested screen '".. newScreen .."' doesn't exist")
 		end
 
 		if actuallySwitch then
+			screens[currentScreen]:switchOut()
 			currentScreen	= newScreen
+			nextScreen		= false
 			screenFadeDir	= "in"
 			screenFadeTimer	= gTimer
-			screenFadeTime	= screens[currentScreen].fadeInTime
+			screenFadeTime	= skipFade and 0 or screens[currentScreen].fadeInTime
 			screens[currentScreen]:switchIn()
 		else
 			nextScreen		= newScreen
 			screenFadeDir	= "out"
 			screenFadeTimer	= gTimer
 			screenFadeTime	= screens[currentScreen].fadeOutTime
-			screens[currentScreen]:switchOut()
 
 		end
 	end

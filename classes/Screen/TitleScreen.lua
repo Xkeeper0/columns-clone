@@ -3,7 +3,7 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	TitleScreen	= Screen:extends({ options = {}, cursorPosition = 1, fadeInTime = 2 })
+	TitleScreen	= Screen:extends({ options = {}, cursorPosition = 1 })
 
 
 	--- Set up the title screen

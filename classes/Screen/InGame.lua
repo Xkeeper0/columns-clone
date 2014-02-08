@@ -56,7 +56,7 @@
 
 
 		if key == "escape" then
-			changeScreen("inGamePaused")
+			changeScreen("inGamePaused", true, true)
 		end
 
 	end

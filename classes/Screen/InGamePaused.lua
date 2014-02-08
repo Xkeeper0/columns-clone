@@ -34,7 +34,7 @@
 
 
 		if key == "escape" then
-			changeScreen("inGame")
+			changeScreen("inGame", true, true)
 		end
 
 	end

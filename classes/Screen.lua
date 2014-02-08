@@ -3,7 +3,7 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	Screen	= LCS.class({ fadeInTime = 1, fadeOutTime = 1 })
+	Screen	= LCS.class({ fadeInTime = .5, fadeOutTime = .5 })
 
 
 	--- Callback for initializing a new instance
