@@ -3,7 +3,7 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	Screen	= LCS.class()
+	Screen	= LCS.class({ fadeInTime = 1, fadeOutTime = 1 })
 
 
 	--- Callback for initializing a new instance
@@ -44,6 +44,45 @@
 	function Screen:switchOut()
 	end
 
+
+	--- Fade in the screen.
+	-- @param percent	Percent through fade animation
+	function Screen:fadeIn(percent)
+
+		local	b	= math.min(255, math.max(0, 255 - percent * 255))
+		self:fadeOverlay(b)
+
+	end
+
+
+	--- Fade in the screen.
+	-- @param percent	Percent through fade animation
+	function Screen:fadeOut(percent)
+
+		local	b	= math.min(255, math.max(0, percent * 255))
+		self:fadeOverlay(b)
+
+	end
+
+
+	--- Draw a box covering the entire screen to fade it in/out
+	-- @param alpha Alpha level (for color)
+	function Screen:fadeOverlay(alpha)
+
+		local r, g, b, a	= love.graphics.getColor()
+
+
+		love.graphics.setColor(0, 0, 0, alpha)
+		love.graphics.polygon("fill", {
+			0,		0,
+			640,	0,
+			640,	480,
+			0,		480,
+			})
+
+		love.graphics.setColor(r, g, b, a)
+
+	end
 
 
 	return Screen

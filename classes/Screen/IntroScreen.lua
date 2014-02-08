@@ -4,14 +4,15 @@
 
 
 	-- Create class
-	IntroScreen	= Screen:extends({ animStart = 1, animTime = 3, animEnd = 1})
+	IntroScreen	= Screen:extends({ animStart = 1, animTime = 3, animEnd = 1, fadeInTime = 1, fadeOutTime = 1, changedScreen = false})
 
 
 	--- Callback for updating this screen.
 	-- @param dt Delta-time in seconds since last update
 	function IntroScreen:update(dt)
 
-		if gTimer > (self.animStart + self.animTime + self.animEnd) then
+		if gTimer > (self.animStart + self.animTime) and not self.changedScreen then
+			changedScreen	= true
 			changeScreen('titleScreen')
 		end
 
@@ -26,14 +27,15 @@
 		local brightness	= 255
 		if gTimer < self.animStart then
 			c	= (gTimer) / self.animStart * brightness
-			love.graphics.setBackgroundColor(c, c, c)
+			--love.graphics.setBackgroundColor(c, c, c)
 		elseif gTimer > (self.animStart + self.animTime) then
 			c	= brightness - ((gTimer - (self.animStart + self.animTime)) / self.animEnd * brightness)
-			love.graphics.setBackgroundColor(c, c, c)
+			--love.graphics.setBackgroundColor(c, c, c)
 
 		else
 			c	= brightness
 		end
+		love.graphics.setBackgroundColor(255, 255, 255)
 
 		local sOffset	= (c / brightness) * 2 
 

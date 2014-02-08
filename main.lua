@@ -30,10 +30,15 @@
 			titleScreen		= require("classes.Screen.TitleScreen"):new(),
 			inGame			= require("classes.Screen.InGame"):new(),
 			inGamePaused	= require("classes.Screen.InGamePaused"):new(),
+			options			= require("classes.Screen.Options"):new(),
 
 			}
 
-		currentScreen	= "introScreen";
+		currentScreen	= "introScreen"
+		nextScreen		= "introScreen"
+		screenFadeTimer	= 0
+		screenFadeTime	= screens[currentScreen].fadeInTime
+		screenFadeDir	= "in"
 
 
 
@@ -139,6 +144,21 @@
 
 		screens[currentScreen]:draw()
 
+		if (gTimer - screenFadeTimer <= screenFadeTime) then
+			local fadePct	= (gTimer - screenFadeTimer) / screenFadeTime
+
+			if (screenFadeDir == "in") then
+				screens[currentScreen]:fadeIn(fadePct)
+			else
+				screens[currentScreen]:fadeOut(fadePct)
+			end
+		end
+
+
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.print(string.format("%3.1f\n%3.1f\n%3.1f\n%s\n%s\n%s", gTimer, screenFadeTimer, screenFadeTime, currentScreen, nextScreen, screenFadeDir), 2, 2)
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.print(string.format("%3.1f\n%3.1f\n%3.1f\n%s\n%s\n%s", gTimer, screenFadeTimer, screenFadeTime, currentScreen, nextScreen, screenFadeDir), 0, 0)
 
 	end
 
@@ -151,7 +171,13 @@
 			gTimer	= gTimer + dt
 		end
 
-		screens[currentScreen]:update(dt)
+		local isFading	= (gTimer - screenFadeTimer <= screenFadeTime)
+		if currentScreen ~= nextScreen and not isFading then
+			changeScreen(nextScreen, true)
+		elseif not isFading then
+			screens[currentScreen]:update(dt)
+		end
+
 		--testGame:update()
 	end
 
@@ -187,19 +213,30 @@
 
 
 	--- Changes to a new screen
-	-- @param newScreen	Screen to change to
-	function changeScreen(newScreen)
+	-- @param newScreen			Screen to change to
+	-- @param actuallySwitch	Actually switch to the new screen now (otherwise queue)
+	function changeScreen(newScreen, actuallySwitch)
+
+		print("Changing screens to ".. newScreen)
 
 		if not screens[newScreen] then
 			error("The requested screen '".. newScreen .."' doesn't exist")
 		end
 
-		screens[currentScreen]:switchOut()
+		if actuallySwitch then
+			currentScreen	= newScreen
+			screenFadeDir	= "in"
+			screenFadeTimer	= gTimer
+			screenFadeTime	= screens[currentScreen].fadeInTime
+			screens[currentScreen]:switchIn()
+		else
+			nextScreen		= newScreen
+			screenFadeDir	= "out"
+			screenFadeTimer	= gTimer
+			screenFadeTime	= screens[currentScreen].fadeOutTime
+			screens[currentScreen]:switchOut()
 
-		currentScreen	= newScreen
-
-		screens[currentScreen]:switchIn()
-
+		end
 	end
 
 

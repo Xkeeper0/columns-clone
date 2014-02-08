@@ -3,15 +3,15 @@
 	LCS	= require("classes.LCS")
 
 	-- Create class
-	TitleScreen	= Screen:extends({ options = {}, cursorPosition = 1, fadeInTime = 2 })
+	Options	= Screen:extends({ options = {}, cursorPosition = 1 })
 
 
 	--- Set up the title screen
-	function TitleScreen:init()
+	function Options:init()
 		self.options	= {
-			{ text = "Play",		func = self.startGame		},
-			{ text = "Options",		func = self.startOptions	},
-			{ text = "Quit",		func = self.quit			},
+			{ text = "Start game (again)",		func = self.startGame		},
+			{ text = "Oh no!",					func = self.startOptions	},
+			{ text = "Back",					func = self.goBackToTitle	},
 			}
 
 	end
@@ -19,49 +19,25 @@
 
 
 	--- Callback for drawing this screen
-	function TitleScreen:draw()
+	function Options:draw()
 
 		drawTestBackground()
 
 		love.graphics.setFont(fonts.big)
-		love.graphics.printf("Columns Clone", 0, 480 / 4 - 20, 640, "center")
+		love.graphics.printf("Options", 0, 480 / 4 - 20, 640, "center")
 
 		love.graphics.setFont(fonts.main)
-		love.graphics.printf("Up: Hard-drop\nLeft / Right: Move piece\nDown: Drop\nX: Rotate\n\nEscape: Pause", 0, 200, 640, "center")
+		love.graphics.printf("totally not a bad titlescreen hack, nope", 0, 200, 640, "center")
 
-		love.graphics.setColor(160, 140, 255)
-		love.graphics.printf("Version ".. version, 0, 465, 634, "right")
-		love.graphics.printf("http://rustedlogic.net/\nhttps://github.com/Xkeeper0/columns-clone", 5, 452, 620, "left")
-		love.graphics.setColor(255, 255, 255)
 
 		self:drawOptions(640 / 2, 18 * 18)
-
-		--[[
-		if gTimer - self.introTimer	< self.fadeInTime then
-
-			local	b	= 255 - ((gTimer - self.introTimer) / self.fadeInTime) * 255
-
-			love.graphics.setColor(0, 0, 0, b)
-			love.graphics.polygon("fill", {
-				0,		0,
-				640,	0,
-				640,	480,
-				0,		480,
-				})
-
-		end
-
-		--]]
-
-		love.graphics.setColor(255, 255, 255)
-
 	end
 
 
 	--- Draw the options on the screen
 	-- @param x X position on screen
 	-- @param y Y position on screen
-	function TitleScreen:drawOptions(x, y)
+	function Options:drawOptions(x, y)
 
 		for k, v in pairs(self.options) do
 			love.graphics.printf(v.text, x - 50, y + (18 * k), 100, "center")
@@ -82,7 +58,7 @@
 	--- Callback for handling keypresses.
 	-- @param key Key pressed
 	-- @param isRepeat If this is an auto-repeated keypress
-	function TitleScreen:handleKeyPress(key, isRepeat)
+	function Options:handleKeyPress(key, isRepeat)
 
 		if key == "up" or key == "down" then
 			sounds.move:stop()
@@ -105,29 +81,28 @@
 
 
 	--- Start the game screen
-	function TitleScreen:startGame()
+	function Options:startGame()
 		changeScreen("inGame")
 	end
 
 	--- Start the options screen
-	function TitleScreen:startOptions()
+	function Options:startOptions()
 		changeScreen("options")
 	end
 
 	--- Quit the game (oh no!)
-	function TitleScreen:quit()
-		love.event.quit()
+	function Options:goBackToTitle()
+		changeScreen("titleScreen")
 	end
 
 
 
 	--- Callback for when this screen is switched in
-	function TitleScreen:switchIn()
+	function Options:switchIn()
 		self.cursorPosition	= 1
-		self.introTimer		= gTimer
 	end
 
 
-	return TitleScreen
+	return Options
 
 
