@@ -9,9 +9,11 @@
 	--- Set up the title screen
 	function TitleScreen:init()
 		self.options	= {
-			{ pos = 0,	text = "Play",		ret = self.startGame	},
+			{ pos = 0,	text = "Easy",		ret = { func	= self.startGame, args	= { {1, 2, 3, 4}		}	}	},
+			{ pos = 1,	text = "Normal",	ret = { func	= self.startGame, args	= { {1, 2, 3, 4, 5}		}	}	},
+			{ pos = 2,	text = "Hard",		ret = { func	= self.startGame, args	= { {1, 2, 3, 4, 5, 6}	}	}	},
 		--	{ pos = 1,	text = "Options",	ret = self.startOptions	},
-			{ pos = 2,	text = "Quit",		ret = self.quit			},
+			{ pos = 4,	text = "Quit",		ret = { func	= self.quit, args = {}	} },
 			}
 
 		self.menu	= SimpleMenu:new(
@@ -91,7 +93,7 @@
 
 		local ret	= self.menu:handleKeyPress(key)
 		if ret then
-			ret(self)
+			ret.func(self, ret.args)
 		end
 
 	end
@@ -99,8 +101,8 @@
 
 
 	--- Start the game screen
-	function TitleScreen:startGame()
-		screens.inGame:startNewGame()
+	function TitleScreen:startGame(args)
+		screens.inGame:startNewGame(args)
 		changeScreen("inGame")
 	end
 

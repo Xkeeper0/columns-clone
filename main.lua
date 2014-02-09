@@ -153,10 +153,10 @@
 
 		love.graphics.setColor(0, 0, 0, 120)
 		love.graphics.printf("Version ".. version, 0, 466, 635, "right")
-		love.graphics.printf("http://rustedlogic.net/\nhttps://github.com/Xkeeper0/columns-clone", 6, 453, 620, "left")
+		love.graphics.printf("http://xkeeper.itch.io/columns-clone", 6, 466, 620, "left")
 		love.graphics.setColor(160, 140, 255)
 		love.graphics.printf("Version ".. version, 0, 465, 634, "right")
-		love.graphics.printf("http://rustedlogic.net/\nhttps://github.com/Xkeeper0/columns-clone", 5, 452, 620, "left")
+		love.graphics.printf("http://xkeeper.itch.io/columns-clone", 5, 465, 620, "left")
 		love.graphics.setColor(255, 255, 255)
 
 	end

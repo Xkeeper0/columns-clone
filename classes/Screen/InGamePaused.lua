@@ -9,8 +9,8 @@
 	function InGamePaused:init()
 
 		local options	= {
-			{ pos = 0,	text = "Resume",	ret = self.resumeGame	},
-			{ pos = 2,	text = "Quit",		ret = self.quitToMenu	},
+			{ pos = 0,	text = "Resume",	ret = { func	= self.resumeGame }	},
+			{ pos = 2,	text = "Quit",		ret = { func	= self.quitToMenu }	},
 			}
 
 		self.menu	= SimpleMenu:new(
@@ -51,7 +51,7 @@
 
 		local ret	= self.menu:handleKeyPress(key)
 		if ret then
-			ret(self)
+			ret.func(self)
 		end
 
 		if key == "escape" then
