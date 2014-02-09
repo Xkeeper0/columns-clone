@@ -32,14 +32,17 @@
 			love.graphics.printf(v.text, self.x, self.y + (18 * v.pos) + 2, self.w, "center")
 		end
 
-
-		love.graphics.setColor(150, 120, 255, 60)
-		love.graphics.polygon("fill", {
+		local selectionBG	= {
 			self.x         , self.y + (18 * self.options[self.cursorPosition].pos),
 			self.x + self.w, self.y + (18 * self.options[self.cursorPosition].pos),
 			self.x + self.w, self.y + (18 * self.options[self.cursorPosition].pos) + 18,
 			self.x         , self.y + (18 * self.options[self.cursorPosition].pos) + 18,
-			})
+			}
+
+		local blinker		= math.sin(gTimer * 8) * 50
+		love.graphics.setColor(150 + blinker, 120 + blinker, 255, 60)
+		love.graphics.polygon("fill", selectionBG)
+		love.graphics.polygon("line", selectionBG)
 		love.graphics.setColor(255, 255, 255)
 
 	end
