@@ -60,24 +60,26 @@
 							Block:new({{16 * 2, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 							Block:new({{16 * 3, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 							Block:new({{16 * 4, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 5, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 6, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 
 						}
 		blockGraphics[0]	= Block:new({{0, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
 
 		blockGraphics[-1]	= Block:new({
-									{16 * 0, 16},
-									{16 * 1, 16},
-									{16 * 2, 16},
-									{16 * 3, 16},
+									{16 * 0, 16 * 1},
+									{16 * 0, 16 * 2},
+									{16 * 0, 16 * 3},
+									{16 * 0, 16 * 4},
 									},
 									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
 									)
 
 		blockGraphics[99]	= Block:new({
-									{16 * 5, 0},
-									{16 * 6, 0},
-									{16 * 7, 0}
-									}, 
+									{16 * 7, 16 * 0 },
+									{16 * 7, 16 * 1 },
+									{16 * 7, 16 * 2 }
+									},
 									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
 									)
 

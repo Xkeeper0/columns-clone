@@ -63,9 +63,9 @@
 
 
 
-	function InGame:startNewGame()
+	function InGame:startNewGame(playfield, blocks)
 
-		self.game	= Game:new()
+		self.game	= Game:new(playfield, blocks)
 	end
 
 

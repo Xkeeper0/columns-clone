@@ -9,9 +9,9 @@
 	--- Set up the title screen
 	function TitleScreen:init()
 		self.options	= {
-			{ pos = 0,	text = "Easy",		ret = { func	= self.startGame, args	= { {1, 2, 3, 4}		}	}	},
-			{ pos = 1,	text = "Normal",	ret = { func	= self.startGame, args	= { {1, 2, 3, 4, 5}		}	}	},
-			{ pos = 2,	text = "Hard",		ret = { func	= self.startGame, args	= { {1, 2, 3, 4, 5, 6}	}	}	},
+			{ pos = 0,	text = "Easy",		ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4}		}	}	},
+			{ pos = 1,	text = "Normal",	ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5}		}	}	},
+			{ pos = 2,	text = "Hard",		ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5, 6}	}	}	},
 		--	{ pos = 1,	text = "Options",	ret = self.startOptions	},
 			{ pos = 4,	text = "Quit",		ret = { func	= self.quit, args = {}	} },
 			}
@@ -102,7 +102,7 @@
 
 	--- Start the game screen
 	function TitleScreen:startGame(args)
-		screens.inGame:startNewGame(args)
+		screens.inGame:startNewGame(unpack(args))
 		changeScreen("inGame")
 	end
 
