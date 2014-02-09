@@ -5,8 +5,8 @@
 	--
 
 	-- Version
-	version		= "r6-a"
-
+	version		= "r6"
+	versionDate	= "2014-02-08"
 
 	--- LOVE Init
 	function love.load()
@@ -154,11 +154,11 @@
 		end
 
 		love.graphics.setColor(0, 0, 0, 120)
-		love.graphics.printf("Version ".. version, 0, 466, 635, "right")
-		love.graphics.printf("http://xkeeper.itch.io/columns-clone", 6, 466, 620, "left")
+		love.graphics.printf("Version ".. version .."\n".. versionDate, 0, 453, 635, "right")
+		love.graphics.printf("\nhttp://xkeeper.itch.io/columns-clone", 6, 453, 620, "left")
 		love.graphics.setColor(160, 140, 255)
-		love.graphics.printf("Version ".. version, 0, 465, 634, "right")
-		love.graphics.printf("http://xkeeper.itch.io/columns-clone", 5, 465, 620, "left")
+		love.graphics.printf("Version ".. version .."\n".. versionDate, 0, 452, 634, "right")
+		love.graphics.printf("\nhttp://xkeeper.itch.io/columns-clone", 5, 451, 620, "left")
 		love.graphics.setColor(255, 255, 255)
 
 	end
