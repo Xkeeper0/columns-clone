@@ -5,8 +5,8 @@
 	--
 
 	-- Version
-	version		= "r5"
-
+	version		= "r6"
+	versionDate	= "2014-02-08"
 
 	--- LOVE Init
 	function love.load()
@@ -17,28 +17,37 @@
 
 		-- Include required classes
 		LCS			= require("classes.LCS")		-- Lua Class System
-		Screen		= require("classes.Screen")		-- Game (contains all the other stuff)
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
 		Block		= require("classes.Block")		-- Blocks
+		SimpleMenu	= require("classes.SimpleMenu")	-- Simple menu
+
+		Screen		= require("classes.Screen")		-- Screens
 
 		screens			= {
 
-			default			= Screen,
-			introScreen		= require("classes.Screen.IntroScreen"),
-			titleScreen		= require("classes.Screen.TitleScreen"),
-			inGame			= require("classes.Screen.InGame"),
-			inGamePaused	= require("classes.Screen.InGamePaused"),
+			default			= Screen:new(),
+			introScreen		= require("classes.Screen.IntroScreen"):new(),
+			titleScreen		= require("classes.Screen.TitleScreen"):new(),
+			inGame			= require("classes.Screen.InGame"):new(),
+			inGamePaused	= require("classes.Screen.InGamePaused"):new(),
+			options			= require("classes.Screen.Options"):new(),
 
 			}
 
-		currentScreen	= "introScreen";
+		currentScreen	= "introScreen"
+		nextScreen		= false
+		screenFadeTimer	= 0
+		screenFadeTime	= screens[currentScreen].fadeInTime
+		screenFadeDir	= "in"
 
 
 
-		blockImage		= love.graphics.newImage("images/blocks.png")
-		logoImage		= love.graphics.newImage("images/rustedlogic.png")
+		blockImage		= love.graphics.newImage("images/blocks/blocks.png")
+		logoImage		= love.graphics.newImage("images/logos/rustedlogic.png")
+		background		= love.graphics.newImage("images/backgrounds/background.png")
+		backgroundP		= love.graphics.newImage("images/backgrounds/playfield.png")
 
 
 		local blockImageW	= blockImage:getWidth()
@@ -51,24 +60,26 @@
 							Block:new({{16 * 2, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 							Block:new({{16 * 3, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 							Block:new({{16 * 4, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 5, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
+							Block:new({{16 * 6, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth),
 
 						}
 		blockGraphics[0]	= Block:new({{0, 0}}, 16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth)
 
 		blockGraphics[-1]	= Block:new({
-									{16 * 0, 16},
-									{16 * 1, 16},
-									{16 * 2, 16},
-									{16 * 3, 16},
+									{16 * 0, 16 * 1},
+									{16 * 0, 16 * 2},
+									{16 * 0, 16 * 3},
+									{16 * 0, 16 * 4},
 									},
 									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
 									)
 
 		blockGraphics[99]	= Block:new({
-									{16 * 5, 0},
-									{16 * 6, 0},
-									{16 * 7, 0}
-									}, 
+									{16 * 7, 16 * 0 },
+									{16 * 7, 16 * 1 },
+									{16 * 7, 16 * 2 }
+									},
 									16, 16, blockImageW, blockImageH, gameGridHeight, gameGridWidth, .25 * (1/4)
 									)
 
@@ -98,8 +109,8 @@
 		fonts	= {
 			big			= love.graphics.setNewFont(30),
 			main		= love.graphics.setNewFont(10),
-			numbers		= love.graphics.newImageFont("images/numberfont.png", "0123456789 .x"),
-			bignumbers	= love.graphics.newImageFont("images/numberfont-2x.png", "0123456789 .x"),
+			numbers		= love.graphics.newImageFont("images/fonts/numberfont.png", "0123456789 .x"),
+			bignumbers	= love.graphics.newImageFont("images/fonts/numberfont-2x.png", "0123456789 .x"),
 
 			}
 
@@ -120,13 +131,8 @@
 		gTimer			= 0
 		pauseTimer		= false
 
-		testPlayfield	= Playfield:new()
-
-		testGame		= Game:new(testPlayfield, {1, 2, 3, 4})
-
-		testScreen		= Screen:new()
-
 		keysHeld		= {}
+
 
 	end
 
@@ -137,6 +143,23 @@
 
 		screens[currentScreen]:draw()
 
+		if (gTimer - screenFadeTimer <= screenFadeTime) then
+			local fadePct	= math.min(1, math.max(0, (gTimer - screenFadeTimer) / screenFadeTime))
+
+			if (screenFadeDir == "in") then
+				screens[currentScreen]:fadeIn(fadePct)
+			else
+				screens[currentScreen]:fadeOut(fadePct)
+			end
+		end
+
+		love.graphics.setColor(0, 0, 0, 120)
+		love.graphics.printf("Version ".. version .."\n".. versionDate, 0, 453, 635, "right")
+		love.graphics.printf("\nhttp://xkeeper.itch.io/columns-clone", 6, 453, 620, "left")
+		love.graphics.setColor(160, 140, 255)
+		love.graphics.printf("Version ".. version .."\n".. versionDate, 0, 452, 634, "right")
+		love.graphics.printf("\nhttp://xkeeper.itch.io/columns-clone", 5, 451, 620, "left")
+		love.graphics.setColor(255, 255, 255)
 
 	end
 
@@ -149,7 +172,13 @@
 			gTimer	= gTimer + dt
 		end
 
-		screens[currentScreen]:update(dt)
+		local isFading	= (gTimer - screenFadeTimer <= screenFadeTime)
+		if nextScreen and not isFading then
+			changeScreen(nextScreen, true)
+		elseif not isFading then
+			screens[currentScreen]:update(dt)
+		end
+
 		--testGame:update()
 	end
 
@@ -164,7 +193,10 @@
 		-- Mark this key as being down
 		keysHeld[key]	= gTimer
 
-		screens[currentScreen]:handleKeyPress(key, isrepeat)
+		local isFading	= (gTimer - screenFadeTimer <= screenFadeTime)
+		if not isFading then
+			screens[currentScreen]:handleKeyPress(key, isrepeat)
+		end
 
 	end
 
@@ -185,15 +217,30 @@
 
 
 	--- Changes to a new screen
-	-- @param newScreen	Screen to change to
-	function changeScreen(newScreen)
+	-- @param newScreen			Screen to change to
+	-- @param actuallySwitch	Actually switch to the new screen now (otherwise queue)
+	-- @param skipFade			Skip the fade-in/out
+	function changeScreen(newScreen, actuallySwitch, skipFade)
 
 		if not screens[newScreen] then
-			error("The requested screen ".. newScreen .." doesn't exist")
+			error("The requested screen '".. newScreen .."' doesn't exist")
 		end
 
-		currentScreen	= newScreen
+		if actuallySwitch then
+			screens[currentScreen]:switchOut()
+			currentScreen	= newScreen
+			nextScreen		= false
+			screenFadeDir	= "in"
+			screenFadeTimer	= gTimer
+			screenFadeTime	= skipFade and 0 or screens[currentScreen].fadeInTime
+			screens[currentScreen]:switchIn()
+		else
+			nextScreen		= newScreen
+			screenFadeDir	= "out"
+			screenFadeTimer	= gTimer
+			screenFadeTime	= screens[currentScreen].fadeOutTime
 
+		end
 	end
 
 
@@ -205,5 +252,13 @@
 	-- @param max	Upper bound
 	function math.inrange(val, min, max)
 		return val >= min and val <= max
+	end
+
+
+
+	function drawTestBackground()
+		love.graphics.push()
+		love.graphics.draw(background, 0, 0)
+		love.graphics.pop()
 	end
 

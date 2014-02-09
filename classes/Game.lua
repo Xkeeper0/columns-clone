@@ -99,8 +99,56 @@
 	function Game:init(newPlayfield, blocks)
 
 		-- Take in the playfield
-		playfield			= newPlayfield
+		playfield			= newPlayfield or Playfield:new()
 		blockTypes			= blocks and blocks or blockTypes
+
+		-- Reset everything
+		-- BIG UGLY BLOB OF CODE HERE --
+
+		currentPoints			= 0			-- (real) current score
+		displayPoints			= 0			-- in case I feel like making a fancy rolling counter
+		totalChain				= false		-- Total chain value (false if no chain)
+		currentChain			= false		-- Chain value for the current clear set
+		chainBroken				= true		-- True if the chain has broken.
+		clearPoints				= 0			-- Points for the most recent clear
+		chainPoints				= 0			-- Points for this chain, in total
+		thisChainPoints			= 0			-- Points for the last clear in this chain
+		displayChainPoints		= 0			-- Points for this chain, in total
+		clearedBlocks			= 0			-- Total blocks cleared
+		blocksCleared			= 0			-- Blocks cleared in latest clear
+		isMagicClear			= false		-- If this is a magic piece clear
+
+		totalPieces				= 0			-- Total pieces dropped (for later)
+		currentLevel			= 0			-- Current game level
+
+		-- Game status
+		gameOver				= false
+
+		-- Our current and next pieces for playing
+		currentPiecePosition	= { x = defaultPieceX, y = defaultPieceY }
+		nextPiece				= false
+		autoDown				= true
+		dasTimer				= 0
+
+		gravityTimer			= false						-- Last time we did gravity time (gameStateTime)
+		gravityTime			= gravityTiming[1][1]		-- How long it takes for a piece to move down one row
+		lockTimer				= false						-- When the piece stared to lock (gameStateTime)
+		lockTime				= gravityTiming[1][2]		-- How long until pieces lock
+
+		clears				= false
+
+		-- Current state we're in. Function pointer to what gets run?
+		gameState				= false
+		gameTimer				= 0
+
+		-- Time when we went into this gamestate (used for timing)
+		gameStateTime	= 0
+
+		-- Are we handling player input right now?
+		playerInput			= false
+
+
+
 
 		-- Set the starting piece position to halfway into the field
 		-- (Biased towards the left in the case of a tie)
@@ -294,7 +342,7 @@
 				chainPoints		= chainPoints + thisChainPoints
 			end
 
-			testPlayfield:doGravity()
+			playfield:doGravity()
 			sounds.gravity:stop()
 			sounds.gravity:play()
 		else
@@ -497,12 +545,13 @@
 
 		love.graphics.setFont(fonts.numbers)
 
+		love.graphics.draw(backgroundP, 18 * 4, 18 * 3)
 		if not hidePlayfield then
-			playfield:draw(100, 50, 1, self:getGameStateTime())
+			playfield:draw(18 * 4 + 1, 18 * 3 + 1, 1, self:getGameStateTime())
 			if playerInput or gameOver then
-				currentPiece:draw(100, 50, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))
+				currentPiece:draw(18 * 4 + 1, 18 * 3 + 1, currentPiecePosition.x, (currentPiecePosition.y) - 1 + math.min(1, ((gameTimer - gravityTimer) / gravityTime)))
 			end
-			nextPiece:draw(250, 50, 1, 1)
+			nextPiece:draw(18 * 12 + 1, 18 * 3 + 1, 1, 1)
 		end
 
 		love.graphics.setColor(150, 150, 150)
