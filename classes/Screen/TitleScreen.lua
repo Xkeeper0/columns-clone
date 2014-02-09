@@ -10,7 +10,7 @@
 	function TitleScreen:init()
 		self.options	= {
 			{ pos = 0,	text = "Play",		ret = self.startGame	},
-			{ pos = 1,	text = "Options",	ret = self.startOptions	},
+		--	{ pos = 1,	text = "Options",	ret = self.startOptions	},
 			{ pos = 2,	text = "Quit",		ret = self.quit			},
 			}
 
