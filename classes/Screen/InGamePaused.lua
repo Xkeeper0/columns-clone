@@ -42,7 +42,7 @@
 		--love.graphics.printf("Enter:\nContinue", 18 * 4, 18 * 12, 18 * 6, "center")
 
 		self.menu:draw()
-		
+
 
 	end
 
@@ -71,6 +71,10 @@
 		changeScreen("titleScreen")
 	end
 
+
+	function InGamePaused:switchIn()
+		self.menu:setCursorPosition(1)
+	end
 
 
 	return InGamePaused

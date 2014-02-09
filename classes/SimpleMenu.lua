@@ -72,12 +72,9 @@
 
 
 
-	--- Move the selection in the given direction
-	-- @param direction	Direction to move (-1 or 1)
+	--- Return the currently selected option
 	function SimpleMenu:selectOption()
-		local ret	= self.options[self.cursorPosition].ret
-		self:setCursorPosition(1)
-		return ret
+		return self.options[self.cursorPosition].ret
 
 	end
 
