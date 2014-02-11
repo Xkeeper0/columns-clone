@@ -25,6 +25,7 @@
 		Piece		= require("classes.Piece")		-- Pieces
 		Block		= require("classes.Block")		-- Blocks
 		SimpleMenu	= require("classes.SimpleMenu")	-- Simple menu
+		HighScores	= require("classes.HighScores")	-- High Score Manager
 
 		Screen		= require("classes.Screen")		-- Screens
 
