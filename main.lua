@@ -15,8 +15,11 @@
 		-- Seed a new random number set
 		math.randomseed(os.time())
 
-		-- Include required classes
+		-- External libraries
+		json		= require("ext.json.json")		-- JSON encoding and decoding stuff
 		LCS			= require("classes.LCS")		-- Lua Class System
+
+		-- Include required classes
 		Game		= require("classes.Game")		-- Game (contains all the other stuff)
 		Playfield	= require("classes.Playfield")	-- Playfield
 		Piece		= require("classes.Piece")		-- Pieces
