@@ -266,3 +266,29 @@
 		love.graphics.pop()
 	end
 
+
+
+--- Quick ugly "print entire array" function
+-- Blazenly stolen from http://stackoverflow.com/a/13398936/886398
+function print_r(arr, indentLevel)
+    local str = ""
+    local indentStr = "#"
+
+    if(indentLevel == nil) then
+        print(print_r(arr, 0))
+        return
+    end
+
+    for i = 0, indentLevel do
+        indentStr = indentStr.."\t"
+    end
+
+    for index,value in pairs(arr) do
+        if type(value) == "table" then
+            str = str..indentStr..index..": \n"..print_r(value, (indentLevel + 1))
+        else 
+            str = str..indentStr..index..": "..value.."\n"
+        end
+    end
+    return str
+end
