@@ -62,6 +62,8 @@
 
 		love.graphics.setColor(255, 255, 255)
 
+		testScores:showHighScores()
+
 	end
 
 

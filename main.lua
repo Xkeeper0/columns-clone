@@ -137,6 +137,7 @@
 
 		keysHeld		= {}
 
+		testScores		= HighScores:new()
 
 	end
 
