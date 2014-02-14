@@ -1,6 +1,6 @@
 
-
 	require("love.filesystem")
+	require("love.timer")
 
 	local http	= require("socket.http");
 	local json	= require("ext.json.json");
@@ -9,9 +9,7 @@
 
 	local function doWork()
 
-		print("Thread starting up")
 		local url	= input:demand()
-		print("URL: ".. url)
 		local content, code, headers	= http.request(url)
 		local result	= {
 			code = code,
@@ -19,9 +17,8 @@
 			content = content,
 			}
 
-		print("HTTP request OK")
+		love.timer.sleep(1)
 		output:supply(result)
-		print("Result supplied, bye")
 	end
 
 	doWork()

@@ -33,9 +33,7 @@
 
 			local result	= self.channels.output:pop()
 			if result then
-				print("Got message from HTTPRequest")
 				self.scores	= json.decode(result.content)
-				print_r(self.scores)
 				return true
 			end
 		else
@@ -45,22 +43,11 @@
 	end
 
 
-	-- Fetching a JSON library for Lua, please wait...
-
-
-	function HighScores:showHighScores()
-
-		if not self.scores then
-			self:fetchHighScores()
-
-			love.graphics.print("Waiting for HighScores to return", 50, 50);
-
-
-		else
-			love.graphics.print(tostring(self.scores), 50, 50)
-
-		end
+	function HighScores:getHighScores()
+		return self.scores
 
 	end
+
+
 
 	return HighScores

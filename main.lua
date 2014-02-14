@@ -37,6 +37,7 @@
 			inGame			= require("classes.Screen.InGame"):new(),
 			inGamePaused	= require("classes.Screen.InGamePaused"):new(),
 			options			= require("classes.Screen.Options"):new(),
+			highScoreScreen	= require("classes.Screen.HighScoreScreen"):new(),
 
 			}
 

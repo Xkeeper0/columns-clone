@@ -9,11 +9,11 @@
 	--- Set up the title screen
 	function TitleScreen:init()
 		self.options	= {
-			{ pos = 0,	text = "Easy",		ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4}		}	}	},
-			{ pos = 1,	text = "Normal",	ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5}		}	}	},
-			{ pos = 2,	text = "Hard",		ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5, 6}	}	}	},
-		--	{ pos = 1,	text = "Options",	ret = self.startOptions	},
-			{ pos = 4,	text = "Quit",		ret = { func	= self.quit, args = {}	} },
+			{ pos = 0,	text = "Easy",			ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4}		}	}	},
+			{ pos = 1,	text = "Normal",		ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5}		}	}	},
+			{ pos = 2,	text = "Hard",			ret = { func	= self.startGame, args	= { false, {1, 2, 3, 4, 5, 6}	}	}	},
+			{ pos = 3,	text = "High Scores",	ret = { func	= self.goToHighScores	}	},
+			{ pos = 4,	text = "Quit",			ret = { func	= self.quit, args = {}	} },
 			}
 
 		self.menu	= SimpleMenu:new(
@@ -62,8 +62,6 @@
 
 		love.graphics.setColor(255, 255, 255)
 
-		testScores:showHighScores()
-
 	end
 
 
@@ -111,6 +109,11 @@
 	--- Start the options screen
 	function TitleScreen:startOptions()
 		changeScreen("options")
+	end
+
+	--- Start the options screen
+	function TitleScreen:goToHighScores()
+		changeScreen("highScoreScreen")
 	end
 
 	--- Quit the game (oh no!)
